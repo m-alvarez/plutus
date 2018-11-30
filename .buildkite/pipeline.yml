@@ -7,3 +7,9 @@ steps:
     command: 'ci/bazel-test.sh'
     agents:
       system: x86_64-linux
+  - label: 'bazel-test-darwin'
+    command: 'ci/bazel-test.sh'
+    env:
+      NIX_SSL_CERT_FILE: /nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt
+    agents:
+      system: x86_64-darwin
