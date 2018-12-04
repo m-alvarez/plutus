@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#!nix-shell -p bazel python -i bash -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/09195057114a0a8d112c847a9a8f52957420857d.tar.gz
+#!nix-shell -p bazel python -i bash -I nixpkgs=https://github.com/input-output-hk/nixpkgs/archive/ce68b263fe25a05a1111acac8ccbe538d139d2dc.tar.gz
 
 set -euo pipefail
 
