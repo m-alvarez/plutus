@@ -1,0 +1,699 @@
+# download the archive:
+local_repository(
+    name = "bazel_rules_purescript",
+    path = "rules_purescript-master"
+)
+
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+git_repository(
+    name = "bazel_skylib",
+    remote = "https://github.com/bazelbuild/bazel-skylib.git",
+    tag = "0.6.0"
+)
+
+# load the purescript rules and functions:
+load("@bazel_rules_purescript//purescript:purescript.bzl", "purescript_toolchain", "purescript_dep")
+
+# downloads the `purs` command:
+purescript_toolchain()
+
+# add some dependencies:
+purescript_dep(
+    name = "purescript_prelude",
+    url = "https://github.com/purescript/purescript-prelude/archive/v3.2.0.tar.gz",
+    sha256 = "8e30cdaa45e6cd8778a5f7ac224efa51ec3648412ac1489fbf7f589ab5ac9846",
+    strip_prefix = "purescript-prelude-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_halogen",
+    url = "https://github.com/slamdata/purescript-halogen/archive/v3.1.3.tar.gz",
+    sha256 = "3b2e35f2ee4491d52a2a6e2e1fc8c3431a712bc40f9c0303a58577249845569a",
+    strip_prefix = "purescript-halogen-3.1.3",
+)
+
+purescript_dep(
+    name = "purescript_partial",
+    url = "https://github.com/purescript/purescript-partial/archive/v1.2.1.tar.gz",
+    sha256 = "6cc7dca57602db1ec68ef0fa2d5045d106bf458cd2f0368022ef8e7442355d0c",
+    strip_prefix = "purescript-partial-1.2.1",
+)
+
+purescript_dep(
+    name = "purescript_debug",
+    url = "https://github.com/garyb/purescript-debug/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-debug-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_transformers",
+    url = "https://github.com/purescript/purescript-transformers/archive/v3.6.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-transformers-3.6.0",
+)
+
+purescript_dep(
+    name = "purescript_argonaut_core",
+    url = "https://github.com/purescript-contrib/purescript-argonaut-core/archive/v3.1.1.tar.gz",
+    sha256 = "7ece80d30ea8d5d00fe2ed52b9298a0e81bfa6c32002cb629c32642ee0e25206",
+    strip_prefix = "purescript-argonaut-core-3.1.1",
+)
+
+purescript_dep(
+    name = "purescript_psci_support",
+    url = "https://github.com/purescript/purescript-psci-support/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-psci-support-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_js_date",
+    url = "https://github.com/garyb/purescript-js-date/archive/v4.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-js-date-4.0.0",
+)
+
+purescript_dep(
+    name = "purescript_console",
+    url = "https://github.com/purescript/purescript-console/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-console-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_argonaut_codecs",
+    url = "https://github.com/purescript-contrib/purescript-argonaut-codecs/archive/v3.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-argonaut-codecs-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_test_unit",
+    url = "https://github.com/bodil/purescript-test-unit/archive/v13.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-test-unit-13.0.0",
+)
+
+purescript_dep(
+    name = "purescript_node_fs",
+    url = "https://github.com/purescript-contrib/purescript-node-fs/archive/v4.0.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-node-fs-4.0.1",
+)
+
+purescript_dep(
+    name = "purescript_halogen_echarts",
+    url = "https://github.com/slamdata/purescript-halogen-echarts/archive/v14.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-halogen-echarts-14.0.0",
+)
+
+purescript_dep(
+    name = "purescript_ace_halogen",
+    url = "https://github.com/slamdata/purescript-ace-halogen/archive/v7.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-ace-halogen-7.0.0",
+)
+
+purescript_dep(
+    name = "purescript_remotedata",
+    url = "https://github.com/krisajenkins/purescript-remotedata/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-remotedata-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_servant_support",
+    url = "https://github.com/eskimor/purescript-servant-support/archive/v9.0.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-servant-support-9.0.1",
+)
+
+purescript_dep(
+    name = "purescript_ace",
+    url = "https://github.com/slamdata/purescript-ace/archive/v4.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-ace-4.0.0",
+)
+
+purescript_dep(
+    name = "purescript_distributive",
+    url = "https://github.com/mankyKitty/purescript-distributive/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-distributive-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_arrays",
+    url = "https://github.com/purescript/purescript-arrays/archive/v4.4.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-arrays-4.4.0",
+)
+
+purescript_dep(
+    name = "purescript_lazy",
+    url = "https://github.com/purescript/purescript-lazy/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-lazy-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_tuples",
+    url = "https://github.com/purescript/purescript-tuples/archive/v4.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-tuples-4.1.0",
+)
+
+purescript_dep(
+    name = "purescript_aff",
+    url = "https://github.com/slamdata/purescript-aff/archive/v4.1.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-aff-4.1.1",
+)
+
+purescript_dep(
+    name = "purescript_fork",
+    url = "https://github.com/slamdata/purescript-fork/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-fork-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_foreign",
+    url = "https://github.com/purescript/purescript-foreign/archive/v4.0.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-foreign-4.0.1",
+)
+
+purescript_dep(
+    name = "purescript_const",
+    url = "https://github.com/mankyKitty/purescript-const/archive/v3.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-const-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_dom_indexed",
+    url = "https://github.com/slamdata/purescript-dom-indexed/archive/v5.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-dom-indexed-5.0.0",
+)
+
+purescript_dep(
+    name = "purescript_coroutines",
+    url = "https://github.com/paf31/purescript-coroutines/archive/v4.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-coroutines-4.0.0",
+)
+
+purescript_dep(
+    name = "purescript_media_types",
+    url = "https://github.com/purescript-contrib/purescript-media-types/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-media-types-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_nullable",
+    url = "https://github.com/paf31/purescript-nullable/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-nullable-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_profunctor_lenses",
+    url = "https://github.com/paf31/purescript-profunctor-lenses/archive/v3.8.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-profunctor-lenses-3.8.0",
+)
+
+purescript_dep(
+    name = "purescript_parallel",
+    url = "https://github.com/paf31/purescript-parallel/archive/v3.3.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-parallel-3.3.1",
+)
+
+purescript_dep(
+    name = "purescript_maps",
+    url = "https://github.com/purescript/purescript-maps/archive/v3.6.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-maps-3.6.0",
+)
+
+purescript_dep(
+    name = "purescript_unsafe_reference",
+    url = "https://github.com/purescript-contrib/purescript-unsafe-reference/archive/v2.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-unsafe-reference-2.0.0",
+)
+
+purescript_dep(
+    name = "purescript_halogen_vdom",
+    url = "https://github.com/slamdata/purescript-halogen-vdom/archive/v2.0.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-halogen-vdom-2.0.1",
+)
+
+purescript_dep(
+    name = "purescript_free",
+    url = "https://github.com/purescript/purescript-free/archive/v4.3.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-free-4.3.0",
+)
+
+purescript_dep(
+    name = "purescript_unsafe_coerce",
+    url = "https://github.com/purescript-contrib/purescript-unsafe-coerce/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-unsafe-coerce-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_dom",
+    url = "https://github.com/joneshf/purescript-dom/archive/v4.16.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-dom-4.16.0",
+)
+
+purescript_dep(
+    name = "purescript_freeap",
+    url = "https://github.com/ethul/purescript-freeap/archive/v3.0.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-freeap-3.0.1",
+)
+
+purescript_dep(
+    name = "purescript_profunctor",
+    url = "https://github.com/mankyKitty/purescript-profunctor/archive/v3.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-profunctor-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_functions",
+    url = "https://github.com/purescript/purescript-functions/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-functions-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_enums",
+    url = "https://github.com/purescript/purescript-enums/archive/v3.2.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-enums-3.2.1",
+)
+
+purescript_dep(
+    name = "purescript_gen",
+    url = "https://github.com/garyb/purescript-gen/archive/v1.3.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-gen-1.3.1",
+)
+
+purescript_dep(
+    name = "purescript_eff",
+    url = "https://github.com/purescript/purescript-eff/archive/v3.2.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-eff-3.2.1",
+)
+
+purescript_dep(
+    name = "purescript_integers",
+    url = "https://github.com/purescript/purescript-integers/archive/v3.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-integers-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_generics",
+    url = "https://github.com/purescript/purescript-generics/archive/v4.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-generics-4.0.0",
+)
+
+purescript_dep(
+    name = "purescript_either",
+    url = "https://github.com/purescript/purescript-either/archive/v3.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-either-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_quickcheck",
+    url = "https://github.com/purescript/purescript-quickcheck/archive/v4.7.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-quickcheck-4.7.0",
+)
+
+purescript_dep(
+    name = "purescript_js_timers",
+    url = "https://github.com/purescript-contrib/purescript-js-timers/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-js-timers-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_lists",
+    url = "https://github.com/paf31/purescript-lists/archive/v4.12.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-lists-4.12.0",
+)
+
+purescript_dep(
+    name = "purescript_strings",
+    url = "https://github.com/purescript/purescript-strings/archive/v3.5.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-strings-3.5.0",
+)
+
+purescript_dep(
+    name = "purescript_exceptions",
+    url = "https://github.com/purescript/purescript-exceptions/archive/v3.1.0.tar.gz",
+    sha256 = "baecf6e3f4857d1a90b890fb63d277b5e065edf8a7e1016d2604746224db72ee",
+    strip_prefix = "purescript-exceptions-3.1.0",
+)
+
+purescript_dep(
+    name = "purescript_datetime",
+    url = "https://github.com/purescript/purescript-datetime/archive/v3.4.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-datetime-3.4.1",
+)
+
+purescript_dep(
+    name = "purescript_node_buffer",
+    url = "https://github.com/purescript/purescript-node-buffer/archive/v3.0.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-node-buffer-3.0.1",
+)
+
+purescript_dep(
+    name = "purescript_node_streams",
+    url = "https://github.com/purescript-node/purescript-node-streams/archive/v3.3.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-node-streams-3.3.0",
+)
+
+purescript_dep(
+    name = "purescript_node_path",
+    url = "https://github.com/purescript/purescript-node-path/archive/v2.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-node-path-2.0.0",
+)
+
+purescript_dep(
+    name = "purescript_globals",
+    url = "https://github.com/purescript/purescript-globals/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-globals-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_halogen_css",
+    url = "https://github.com/slamdata/purescript-halogen-css/archive/v7.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-halogen-css-7.0.0",
+)
+
+purescript_dep(
+    name = "purescript_now",
+    url = "https://github.com/garyb/purescript-now/archive/v3.0.0.tar.gz",
+    sha256 = "631727e91a6021406170d3155b74940892e7f76db2c6a7d0511a212980132e8b",
+    strip_prefix = "purescript-now-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_refs",
+    url = "https://github.com/purescript/purescript-refs/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-refs-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_random",
+    url = "https://github.com/purescript/purescript-random/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-random-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_generics_rep",
+    url = "https://github.com/purescript/purescript-generics-rep/archive/v5.4.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-generics-rep-5.4.0",
+)
+
+purescript_dep(
+    name = "purescript_bifunctors",
+    url = "https://github.com/purescript-contrib/purescript-bifunctors/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-bifunctors-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_affjax",
+    url = "https://github.com/slamdata/purescript-affjax/archive/v5.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-affjax-5.0.0",
+)
+
+purescript_dep(
+    name = "purescript_foldable_traversable",
+    url = "https://github.com/purescript/purescript-foldable-traversable/archive/v3.7.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-foldable-traversable-3.7.1",
+)
+
+purescript_dep(
+    name = "purescript_echarts",
+    url = "https://github.com/slamdata/purescript-echarts/archive/v10.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-echarts-10.1.0",
+)
+
+purescript_dep(
+    name = "purescript_identity",
+    url = "https://github.com/purescript/purescript-identity/archive/v3.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-identity-3.1.0",
+)
+
+purescript_dep(
+    name = "purescript_argonaut_generic_codecs",
+    url = "https://github.com/eskimor/purescript-argonaut-generic-codecs/archive/v6.0.4.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-argonaut-generic-codecs-6.0.4",
+)
+
+purescript_dep(
+    name = "purescript_unfoldable",
+    url = "https://github.com/paf31/purescript-unfoldable/archive/v3.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-unfoldable-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_st",
+    url = "https://github.com/purescript/purescript-st/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-st-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_nonempty",
+    url = "https://github.com/paf31/purescript-nonempty/archive/v4.3.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-nonempty-4.3.0",
+)
+
+purescript_dep(
+    name = "purescript_tailrec",
+    url = "https://github.com/paf31/purescript-tailrec/archive/v3.3.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-tailrec-3.3.0",
+)
+
+purescript_dep(
+    name = "purescript_type_equality",
+    url = "https://github.com/purescript/purescript-type-equality/archive/v2.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-type-equality-2.1.0",
+)
+
+purescript_dep(
+    name = "purescript_monoid",
+    url = "https://github.com/purescript/purescript-monoid/archive/v3.3.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-monoid-3.3.0",
+)
+
+purescript_dep(
+    name = "purescript_avar",
+    url = "https://github.com/slamdata/purescript-avar/archive/v2.0.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-avar-2.0.1",
+)
+
+purescript_dep(
+    name = "purescript_contravariant",
+    url = "https://github.com/mankyKitty/purescript-contravariant/archive/v3.3.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-contravariant-3.3.0",
+)
+
+purescript_dep(
+    name = "purescript_freet",
+    url = "https://github.com/paf31/purescript-freet/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-freet-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_maybe",
+    url = "https://github.com/purescript/purescript-maybe/archive/v3.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-maybe-3.1.0",
+)
+
+purescript_dep(
+    name = "purescript_functors",
+    url = "https://github.com/purescript/purescript-functors/archive/v2.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-functors-2.2.0",
+)
+
+purescript_dep(
+    name = "purescript_sets",
+    url = "https://github.com/purescript/purescript-sets/archive/v3.2.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-sets-3.2.0",
+)
+
+purescript_dep(
+    name = "purescript_record",
+    url = "https://github.com/purescript/purescript-record/archive/v0.2.6.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-record-0.2.6",
+)
+
+purescript_dep(
+    name = "purescript_exists",
+    url = "https://github.com/paf31/purescript-exists/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-exists-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_control",
+    url = "https://github.com/purescript/purescript-control/archive/v3.3.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-control-3.3.1",
+)
+
+purescript_dep(
+    name = "purescript_catenable_lists",
+    url = "https://github.com/purescript/purescript-catenable-lists/archive/v4.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-catenable-lists-4.0.0",
+)
+
+purescript_dep(
+    name = "purescript_arraybuffer_types",
+    url = "https://github.com/jacereda/purescript-arraybuffer-types/archive/v1.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-arraybuffer-types-1.0.0",
+)
+
+purescript_dep(
+    name = "purescript_math",
+    url = "https://github.com/purescript/purescript-math/archive/v2.1.1.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-math-2.1.1",
+)
+
+purescript_dep(
+    name = "purescript_proxy",
+    url = "https://github.com/purescript/purescript-proxy/archive/v2.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-proxy-2.1.0",
+)
+
+purescript_dep(
+    name = "purescript_typelevel_prelude",
+    url = "https://github.com/purescript/purescript-typelevel-prelude/archive/v2.7.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-typelevel-prelude-2.7.0",
+)
+
+purescript_dep(
+    name = "purescript_css",
+    url = "https://github.com/slamdata/purescript-css/archive/v3.4.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-css-3.4.0",
+)
+
+purescript_dep(
+    name = "purescript_symbols",
+    url = "https://github.com/purescript/purescript-symbols/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-symbols-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_newtype",
+    url = "https://github.com/garyb/purescript-newtype/archive/v2.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-newtype-2.0.0",
+)
+
+purescript_dep(
+    name = "purescript_form_urlencoded",
+    url = "https://github.com/purescript-contrib/purescript-form-urlencoded/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-form-urlencoded-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_http_methods",
+    url = "https://github.com/purescript-contrib/purescript-http-methods/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-http-methods-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_colors",
+    url = "https://github.com/sharkdp/purescript-colors/archive/v4.3.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-colors-4.3.0",
+)
+
+purescript_dep(
+    name = "purescript_variant",
+    url = "https://github.com/natefaubion/purescript-variant/archive/v4.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-variant-4.1.0",
+)
+
+purescript_dep(
+    name = "purescript_invariant",
+    url = "https://github.com/purescript/purescript-invariant/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-invariant-3.0.0",
+)
+
+purescript_dep(
+    name = "purescript_these",
+    url = "https://github.com/purescript-contrib/purescript-these/archive/v3.1.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-these-3.1.0",
+)
+
+purescript_dep(
+    name = "purescript_undefinable",
+    url = "https://github.com/ethul/purescript-undefinable/archive/v3.0.0.tar.gz",
+    sha256 = None,
+    strip_prefix = "purescript-undefinable-3.0.0",
+)

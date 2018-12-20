@@ -28,6 +28,9 @@ import Servant.PureScript.Affjax (AjaxError)
 import Types (Action(Wait, Action), Blockchain, ChildQuery, ChildSlot, FormEvent(SetSubField, SetStringField, SetIntField), MockWallet, Query(EvaluateActions, AddWaitAction, PopulateAction, SetWaitTime, RemoveAction), SimpleArgument(Unknowable, SimpleObject, SimpleString, SimpleInt), ValidationError, _MockWallet, _argumentSchema, _functionName, _wallet, validate)
 import Wallet (walletIdPane, walletsPane)
 
+foo :: Number
+foo = 9.5
+
 simulationPane ::
   forall m aff.
   MonadAff (EChartsEffects aff) m
