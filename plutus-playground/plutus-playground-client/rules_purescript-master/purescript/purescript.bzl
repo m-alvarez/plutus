@@ -245,72 +245,124 @@ load("@bazel_rules_purescript//purescript:purescript.bzl", "purescript_library")
 purescript_library(
     name = "pkg",
     srcs = glob(["src/**/*.purs"]) + glob(["src/**/*.js"]),
+    deps = [%s],
 )
 """
 
-def purescript_dep(name, url, sha256, strip_prefix):
+def purescript_dep(name, url, sha256, strip_prefix, deps = [], patches = []):
     http_archive(
         name = name,
         urls = [url],
         sha256 = sha256,
         strip_prefix = strip_prefix,
-        build_file_content = _purescript_dep_build_content,
+        build_file_content = _purescript_dep_build_content % ",".join([repr(d) for d in deps]),
+        patches = patches,
     )
 
-def output_file(ctx, name, src):
+def drop_til_initcaps(l):
+    drop_at = None
+    for (idx, part) in enumerate(l):
+        if part[0].upper() == part[0] and not drop_at:
+            drop_at = idx
+
+    if not drop_at:
+        drop_at = 0
+
+    return l[drop_at:]
+
+# We need a good way of figuring out the module name just by looking at the file path.
+#   I don't think there is one.
+def output_file(ctx, name, src, outdir):
+    components = paths.split_extension(src.short_path)[0].split("/")
+    module_parts = drop_til_initcaps(components)
+
     path = paths.join(
         "output",
-        ".".join(paths.split_extension(src.short_path)[0].split("/")[3:]),
+        ".".join(module_parts),
         name,
     )
-    f = ctx.actions.declare_file(path)
-    return ctx.actions.declare_file(path)
+    return ctx.actions.declare_file(path, sibling = outdir)
 
 def _purescript_library(ctx):
+    purs = ctx.executable.purs
     srcs = ctx.files.srcs
     deps = ctx.attr.deps
-    purs = ctx.executable.purs
 
-    ps_dep_tar = []
-    for d in ctx.attr.deps:
-        if d.label.name == "archive":
-            ps_dep_tar = ps_dep_tar + d.files.to_list()
-    print(ps_dep_tar)
+    ps_dep_srcs = depset(transitive = [dep[OutputGroupInfo].srcs for dep in deps])
+    ps_dep_outputs = depset(transitive = [dep[OutputGroupInfo].outputs for dep in deps])
+
+    deps_tar = ctx.actions.declare_file("deps.tar")
+
+    # We need to create a single tar file of all the dependencies'
+    # precompiled outputs, so we can pass them all through as a single
+    # argument..
+    tar_command = """
+        set -e
+
+        if [ $# -gt 1 ]
+        then
+          echo Creating
+          tar cf $1 ${@:2}
+        else
+          echo Simulating
+          touch $1
+        fi
+    """
+
+    ctx.actions.run_shell(
+        inputs = ps_dep_outputs.to_list(),
+        command = tar_command,
+        arguments = [deps_tar.path] + [dep_output.path for dep_output in ps_dep_outputs.to_list()],
+        outputs = [deps_tar],
+    );
 
     # Build this lib.
+    outdir = ctx.actions.declare_directory("output")
     outputs = []
     for src in srcs:
         if src.extension == "purs":
-            outputs += [output_file(ctx, "index.js", src)]
-            outputs += [output_file(ctx, "externs.json", src)]
+            outputs += [output_file(ctx, "index.js", src, outdir)]
+            outputs += [output_file(ctx, "externs.json", src, outdir)]
 
         if src.extension == "js":
-            outputs += [output_file(ctx, "foreign.js", src)]
+            outputs += [output_file(ctx, "foreign.js", src, outdir)]
 
-    compileCmd = """
+    # TODO The number of components we strip here is a bit magical, which is bad.
+
+    compile_cmd = """
       set -e
-      if [ -n "$4" ]
+
+      if [ -s $2 ]
       then
-        tar -xf $4 -C $3
-        tar -xf $4 -C bazel-out/darwin-fastbuild/genfiles/$3
+          tar -x -C $2 -f $3 --strip-components 6
       fi
-      $1 compile --output $2 $(find ${3}/src/ -name '*.purs')
+
+      $1 compile --output $2 ${@:4}
     """
 
-    tar_file = ""
-    if len(ps_dep_tar) == 1:
-        tar_file = ps_dep_tar[0].path
-
     ctx.actions.run_shell(
-        inputs = srcs + ps_dep_tar,
+        inputs = srcs + ps_dep_srcs.to_list() + [deps_tar],
         tools = [purs],
-        command = compileCmd,
-        arguments = [purs.path, paths.join(ctx.genfiles_dir.path, ctx.label.package, "output"), ctx.label.package, tar_file] + [s.path for s in srcs if s.extension == "purs"],
-        outputs = outputs,
+        command = compile_cmd,
+        arguments = [
+            purs.path,
+            outdir.path,
+            deps_tar.path,
+        ] + [
+            s.path
+            for s
+            in srcs + ps_dep_srcs.to_list()
+            if s.extension == "purs"
+        ],
+        outputs = outputs + [outdir],
     )
 
     return [
         DefaultInfo(files = depset(srcs + outputs)),
+        OutputGroupInfo(
+            srcs = depset(srcs, transitive = [ps_dep_srcs]),
+            outputs = depset(outputs, transitive = [ps_dep_outputs]),
+        ),
     ]
 
 purescript_library = rule(
