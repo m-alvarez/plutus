@@ -283,37 +283,46 @@ def output_file(ctx, name, src, outdir):
     )
     return ctx.actions.declare_file(path, sibling = outdir)
 
+def _path_above_output(path):
+  parts = path.split("/")
+  topParts = parts[(parts.index("output"))+1:]
+  return "/".join(topParts)
+
 def _purescript_library(ctx):
     purs = ctx.executable.purs
     srcs = ctx.files.srcs
     deps = ctx.attr.deps
+    zipper = ctx.executable._zipper
 
     ps_dep_srcs = depset(transitive = [dep[OutputGroupInfo].srcs for dep in deps])
     ps_dep_outputs = depset(transitive = [dep[OutputGroupInfo].outputs for dep in deps])
 
-    deps_tar = ctx.actions.declare_file("deps.tar")
+    deps_zip = ctx.actions.declare_file("deps.zip")
+    zipPaths = ["%s=%s" % (_path_above_output(p.path), p.path) for p in ps_dep_outputs.to_list()]
 
-    # We need to create a single tar file of all the dependencies'
+    # We need to create a single zip file of all the dependencies'
     # precompiled outputs, so we can pass them all through as a single
     # argument..
-    tar_command = """
+
+    ctx.actions.run_shell(
+        inputs = ps_dep_outputs.to_list(),
+        tools = [ctx.executable._zipper],
+        command = """
         set -e
 
         if [ $# -gt 1 ]
         then
-          echo Creating
-          tar cf $1 ${@:2}
+          echo Creating {deps_zip}
+          {zipper} c {deps_zip} $@
         else
           echo Simulating
-          touch $1
+          touch empty
+          {zipper} c {deps_zip} empty=empty
         fi
-    """
-
-    ctx.actions.run_shell(
-        inputs = ps_dep_outputs.to_list(),
-        command = tar_command,
-        arguments = [deps_tar.path] + [dep_output.path for dep_output in ps_dep_outputs.to_list()],
-        outputs = [deps_tar],
+        """.format(zipper = ctx.executable._zipper.path,
+                   deps_zip = deps_zip.path),
+        arguments = zipPaths,
+        outputs = [deps_zip],
     );
 
     # Build this lib.
@@ -327,28 +336,24 @@ def _purescript_library(ctx):
         if src.extension == "js":
             outputs += [output_file(ctx, "foreign.js", src, outdir)]
 
-    # TODO The number of components we strip here is a bit magical, which is bad.
-
-    compile_cmd = """
-      set -e
-
-      if [ -s $2 ]
-      then
-          tar -x -C $2 -f $3 --strip-components 6
-      fi
-
-      $1 compile --output $2 ${@:4}
-    """
-
     ctx.actions.run_shell(
-        inputs = srcs + ps_dep_srcs.to_list() + [deps_tar],
-        tools = [purs],
-        command = compile_cmd,
+        inputs = srcs + ps_dep_srcs.to_list() + [deps_zip],
+        tools = [purs, zipper],
+        command = """
+          set -e
+
+          if [ -s {output} ]
+          then
+              {zipper} x {deps_zip} -d {output}
+              chmod -R +w ./*
+          fi
+
+          {purs} compile --output {output} $@
+        """.format(zipper = ctx.executable._zipper.path,
+                   purs = ctx.executable.purs.path,
+                   output = outdir.path,
+                   deps_zip = deps_zip.path),
         arguments = [
-            purs.path,
-            outdir.path,
-            deps_tar.path,
-        ] + [
             s.path
             for s
             in srcs + ps_dep_srcs.to_list()
@@ -381,5 +386,6 @@ purescript_library = rule(
         "deps": attr.label_list(
             default = [],
         ),
+        "_zipper": attr.label(executable=True, cfg="host", default=Label("@bazel_tools//tools/zip:zipper"), allow_files=True)
     },
 )
