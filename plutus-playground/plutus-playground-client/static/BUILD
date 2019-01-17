@@ -6,7 +6,7 @@ sass_library(
 )
 
 sass_binary(
-    name = "sass_main",
+    name = "main",
     src = "main.scss",
     deps = [
       ":sass_variables",
@@ -17,6 +17,6 @@ sass_binary(
 
 filegroup(
   name = "static_files",
-  srcs = glob(["*.html", "*.ico"]),
+  srcs = glob(["*.html", "*.ico", "*.scss"]),
   visibility = ["//visibility:public"],
 )

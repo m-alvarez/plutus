@@ -352,7 +352,8 @@ def _purescript_library(ctx):
         """.format(zipper = ctx.executable._zipper.path,
                    purs = ctx.executable.purs.path,
                    output = outdir.path,
-                   deps_zip = deps_zip.path),
+                   deps_zip = deps_zip.path,
+                   ),
         arguments = [
             s.path
             for s
@@ -362,11 +363,22 @@ def _purescript_library(ctx):
         outputs = outputs + [outdir],
     )
 
+    output_zip = ctx.actions.declare_file("output.zip")
+    outputZipPaths = ["%s=%s" % (_path_above_output(p.path), p.path) for p in outputs]
+    ctx.actions.run_shell(
+      inputs = outputs,
+      tools = [zipper],
+      command = "{zipper} c {output_zip} $@".format(zipper = ctx.executable._zipper.path, output_zip = output_zip.path),
+      arguments = outputZipPaths,
+      outputs = [output_zip],
+    )
+
     return [
         DefaultInfo(files = depset(srcs + outputs)),
         OutputGroupInfo(
             srcs = depset(srcs, transitive = [ps_dep_srcs]),
             outputs = depset(outputs, transitive = [ps_dep_outputs]),
+            output_zip = [output_zip, deps_zip],
         ),
     ]
 
@@ -402,10 +414,12 @@ def _trim_package_node_modules(package_name):
 
 def _purescript_bundle(ctx):
     webpack = ctx.executable.webpack
+    zipper = ctx.executable._zipper
     srcs = ctx.files.srcs
     dep_outputs = depset(transitive = [dep[OutputGroupInfo].outputs for dep in ctx.attr.deps])
-    files = [p for p in dep_outputs.to_list()] + [f for f in srcs] + [ctx.file.config] + [ctx.file.entry] + ctx.files.node_modules
-    output = ctx.actions.declare_file("app.js")
+    output_zip = depset(transitive = [dep[OutputGroupInfo].output_zip for dep in ctx.attr.deps])
+    files = [z for z in output_zip.to_list()] + [p for p in dep_outputs.to_list()] + [f for f in srcs] + [ctx.file.config] + [ctx.file.entry] + ctx.files.node_modules
+    output = ctx.actions.declare_file("dist.zip")
 
     node_modules_root = "/".join([f for f in [
         ctx.attr.node_modules.label.workspace_root,
@@ -415,18 +429,26 @@ def _purescript_bundle(ctx):
 
     ctx.actions.run_shell(
         inputs = files,
-        tools = [webpack],
+        tools = [webpack, zipper],
         command = """
         set -e
-        set -x
-        echo "{deps}"
+        zips=({zips})
+        for f in "${{zips[@]}}"; do
+          {zipper} x $f -d ./deps
+        done
         ln -s {node_modules} .
-        {webpack} --config {config}
+        {webpack} --config {config} --display errors-only
+        for file in $(find dist -type f); do
+          files_to_zip="$files_to_zip${{file#dist/}}=$file "
+        done
+        {zipper} c {output} $files_to_zip
         """.format(webpack = webpack.path,
                    config = ctx.file.config.path,
                    entry = ctx.file.entry.path,
                    node_modules = node_modules_root,
-                   deps = [f.path for f in dep_outputs.to_list()],
+                   zipper = zipper.path,
+                   zips = " ".join([z.path for deps in [dep[OutputGroupInfo].output_zip.to_list() for dep in ctx.attr.deps] for z in deps]),
+                   output = output.path,
                    ),
         arguments = [],
         outputs = [output],
@@ -451,5 +473,6 @@ purescript_bundle = rule(
         cfg = "host",
         # default = "@webpack",
     ),
+    "_zipper": attr.label(executable=True, cfg="host", default=Label("@bazel_tools//tools/zip:zipper"), allow_files=True)
   },
 )

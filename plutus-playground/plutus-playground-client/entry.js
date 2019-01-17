@@ -6,4 +6,4 @@ import './node_modules/ace-builds/src-min-noconflict/mode-haskell.js';
 import './node_modules/ace-builds/src-min-noconflict/ext-language_tools.js';
 import './node_modules/ace-builds/src-min-noconflict/theme-monokai.js';
 
-import './src/Main.purs';
+import './deps/Main/index.js';
