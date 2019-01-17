@@ -372,7 +372,6 @@ def _purescript_library(ctx):
 
 purescript_library = rule(
     implementation = _purescript_library,
-    output_to_genfiles = True,
     attrs = {
         "purs": attr.label(
             allow_single_file = True,
@@ -388,4 +387,69 @@ purescript_library = rule(
         ),
         "_zipper": attr.label(executable=True, cfg="host", default=Label("@bazel_tools//tools/zip:zipper"), allow_files=True)
     },
+)
+
+def _trim_package_node_modules(package_name):
+    # trim a package name down to its path prior to a node_modules
+    # segment. 'foo/node_modules/bar' would become 'foo' and
+    # 'node_modules/bar' would become ''
+    segments = []
+    for n in package_name.split("/"):
+        if n == "node_modules":
+            break
+        segments += [n]
+    return "/".join(segments)
+
+def _purescript_bundle(ctx):
+    webpack = ctx.executable.webpack
+    srcs = ctx.files.srcs
+    dep_outputs = depset(transitive = [dep[OutputGroupInfo].outputs for dep in ctx.attr.deps])
+    files = [p for p in dep_outputs.to_list()] + [f for f in srcs] + [ctx.file.config] + [ctx.file.entry] + ctx.files.node_modules
+    output = ctx.actions.declare_file("app.js")
+
+    node_modules_root = "/".join([f for f in [
+        ctx.attr.node_modules.label.workspace_root,
+        _trim_package_node_modules(ctx.attr.node_modules.label.package),
+        "node_modules",
+    ] if f])
+
+    ctx.actions.run_shell(
+        inputs = files,
+        tools = [webpack],
+        command = """
+        set -e
+        set -x
+        echo "{deps}"
+        ln -s {node_modules} .
+        {webpack} --config {config}
+        """.format(webpack = webpack.path,
+                   config = ctx.file.config.path,
+                   entry = ctx.file.entry.path,
+                   node_modules = node_modules_root,
+                   deps = [f.path for f in dep_outputs.to_list()],
+                   ),
+        arguments = [],
+        outputs = [output],
+    );
+    return [DefaultInfo(executable = output)]
+
+purescript_bundle = rule(
+  implementation = _purescript_bundle,
+  attrs = {
+    "deps": attr.label_list(
+      default = [],
+    ),
+    "srcs": attr.label_list(
+        allow_files = True,
+    ),
+    "config": attr.label(allow_single_file = True,),
+    "entry": attr.label(allow_single_file = True,),
+    "node_modules": attr.label(allow_files = True,),
+    "webpack": attr.label(
+        allow_files = True,
+        executable = True,
+        cfg = "host",
+        # default = "@webpack",
+    ),
+  },
 )
