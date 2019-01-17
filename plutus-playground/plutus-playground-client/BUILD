@@ -26,8 +26,8 @@ purescript_library(
 purescript_bundle(
   name = "playground_bundle",
   srcs = ["//static:static_files"],
-  entry = "entry.js",
-  config = "webpack.config.js",
+  entry = "entry-bazel.js",
+  config = "webpack-bazel.config.js",
   deps = [":playground_purs"],
   node_modules = "@npm//:node_modules",
   webpack = "@npm//webpack-cli/bin:webpack-cli",
