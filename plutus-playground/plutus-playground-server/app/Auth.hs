@@ -108,7 +108,6 @@ mkGithubEndpoints = do
 data Config = Config
   { _configJWTSignature       :: !JWT.Signer
   , _configRedirectUrl        :: !Text
-  , _configRedirectEndpoint   :: !Text
   , _configGithubClientId     :: !Text
   , _configGithubClientSecret :: !Text
   }
@@ -120,7 +119,6 @@ instance FromJSON Config where
       _configGithubClientSecret <- o .: "github-client-secret"
       _configJWTSignature <- JWT.hmacSecret <$> o .: "jwt-signature"
       _configRedirectUrl <- o .: "redirect-url"
-      _configRedirectEndpoint <- o .: "redirect-endpoint"
       pure Config {..}
 
 hSessionIdCookie :: Text
@@ -150,7 +148,7 @@ githubRedirect GithubEndpoints {..} Config {..} = redirect githubRedirectUrl
       getUri .
       setQueryString
         [ ( "redirect_uri"
-          , Just $ encodeUtf8 $ _configRedirectUrl <> _configRedirectEndpoint)
+          , Just $ encodeUtf8 $ _configRedirectUrl <> _githubEndpointsCallbackUri)
         , ("scope", Just oauthScopes)
         , ("client_id", Just $ encodeUtf8 _configGithubClientId)
         ] $

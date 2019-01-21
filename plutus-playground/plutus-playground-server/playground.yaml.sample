@@ -6,5 +6,5 @@ auth:
   # You can generate a good signature by running `openssl rand -hex 40` and pasting the result here:
   jwt-signature:
 
+  # This should match the client-facing schema/host/port.
   redirect-url: https://localhost:8009
-  redirect-endpoint: /api/oauth/github/callback
