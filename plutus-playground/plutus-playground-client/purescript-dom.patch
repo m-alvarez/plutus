@@ -1,0 +1,176 @@
+--- /dev/null
++++ src/DOM/Node/ClassList.js
+@@ -0,0 +1,51 @@
++"use strict";
++
++exports.add = function(list) {
++  return function(token) {
++    return function() {
++      return list.add(token);
++    };
++  };
++};
++
++exports.remove = function(list) {
++  return function(token) {
++    return function() {
++      return list.remove(token);
++    };
++  };
++};
++
++exports.contains = function(list) {
++  return function(token) {
++    return function() {
++      return list.contains(token);
++    };
++  };
++};
++
++exports.toggle = function(list) {
++  return function(token) {
++    return function() {
++      return list.toggle(token);
++    };
++  };
++};
++
++exports.toggleForce = function(list) {
++  return function(token) {
++    return function(force) {
++      return function() {
++        return list.toggle(token, force);
++      };
++    };
++  };
++};
++
++exports._item = function(list) {
++  return function(index) {
++    return function() {
++      return list.item(index);
++    };
++  };
++};
+--- /dev/null
++++ src/DOM/Node/ClassList.purs
+@@ -0,0 +1,31 @@
++module DOM.Node.ClassList
++  ( add
++  , contains
++  , item
++  , remove
++  , toggle
++  , toggleForce
++  ) where
++
++import Prelude
++
++import Control.Monad.Eff (Eff)
++import DOM (DOM)
++import DOM.Node.Types (DOMTokenList)
++import Data.Maybe (Maybe)
++import Data.Nullable (Nullable, toMaybe)
++
++foreign import add :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Unit
++
++foreign import remove :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Unit
++
++foreign import contains :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Boolean
++
++foreign import toggle :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Boolean
++
++foreign import toggleForce :: forall eff. DOMTokenList -> String -> Boolean -> Eff (dom :: DOM | eff) Boolean
++
++foreign import _item :: forall eff. DOMTokenList -> Int -> Eff (dom :: DOM | eff) (Nullable String)
++
++item :: forall eff. DOMTokenList -> Int -> Eff (dom :: DOM | eff) (Maybe String)
++item index = map toMaybe <<< _item index
+--- src/DOM/Node/DOMTokenList.js
++++ /dev/null
+@@ -1,51 +0,0 @@
+-"use strict";
+-
+-exports.add = function(list) {
+-  return function(token) {
+-    return function() {
+-      return list.add(token);
+-    };
+-  };
+-};
+-
+-exports.remove = function(list) {
+-  return function(token) {
+-    return function() {
+-      return list.remove(token);
+-    };
+-  };
+-};
+-
+-exports.contains = function(list) {
+-  return function(token) {
+-    return function() {
+-      return list.contains(token);
+-    };
+-  };
+-};
+-
+-exports.toggle = function(list) {
+-  return function(token) {
+-    return function() {
+-      return list.toggle(token);
+-    };
+-  };
+-};
+-
+-exports.toggleForce = function(list) {
+-  return function(token) {
+-    return function(force) {
+-      return function() {
+-        return list.toggle(token, force);
+-      };
+-    };
+-  };
+-};
+-
+-exports._item = function(list) {
+-  return function(index) {
+-    return function() {
+-      return list.item(index);
+-    };
+-  };
+-};
+--- src/DOM/Node/DOMTokenList.purs
++++ /dev/null
+@@ -1,31 +0,0 @@
+-module DOM.Node.ClassList
+-  ( add
+-  , contains
+-  , item
+-  , remove
+-  , toggle
+-  , toggleForce
+-  ) where
+-
+-import Prelude
+-
+-import Control.Monad.Eff (Eff)
+-import DOM (DOM)
+-import DOM.Node.Types (DOMTokenList)
+-import Data.Maybe (Maybe)
+-import Data.Nullable (Nullable, toMaybe)
+-
+-foreign import add :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Unit
+-
+-foreign import remove :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Unit
+-
+-foreign import contains :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Boolean
+-
+-foreign import toggle :: forall eff. DOMTokenList -> String -> Eff (dom :: DOM | eff) Boolean
+-
+-foreign import toggleForce :: forall eff. DOMTokenList -> String -> Boolean -> Eff (dom :: DOM | eff) Boolean
+-
+-foreign import _item :: forall eff. DOMTokenList -> Int -> Eff (dom :: DOM | eff) (Nullable String)
+-
+-item :: forall eff. DOMTokenList -> Int -> Eff (dom :: DOM | eff) (Maybe String)
+-item index = map toMaybe <<< _item index
