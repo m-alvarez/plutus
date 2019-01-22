@@ -72,7 +72,7 @@ let
 
     # This is the stackage LTS plus overrides, plus the plutus
     # packages.
-    haskellPackages = let 
+    haskellPackages = let
       errorOverlay = import ./nix/overlays/force-error.nix {
         inherit pkgs;
         filter = localLib.isPlutus;

@@ -10,8 +10,6 @@ haskell_packages = [
     "cborg",
     "containers",
     "ghc",
-    "language-plutus-core",
-    "plutus-ir",
     "mmorph",
     "lens",
     "mtl",

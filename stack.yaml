@@ -35,6 +35,7 @@ extra-deps:
 - hint-0.9.0
 - exceptions-0.10.0
 - purescript-bridge-0.13.0.0
+- bazel-runfiles-0.7.0.1
 flags:
   language-plutus-core:
     development: true

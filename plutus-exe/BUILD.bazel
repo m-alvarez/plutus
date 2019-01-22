@@ -6,12 +6,12 @@ load(
 
 binary_packages = [
     "base",
-    "language-plutus-core",
-    "plutus-core-interpreter",
     "bytestring",
     "text",
     "mtl",
     "optparse-applicative",
+    "prettyprinter",
+    "transformers",
 ]
 
 [

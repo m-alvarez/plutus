@@ -7,8 +7,8 @@ load(
 )
 
 haskell_packages = [
-    "aeson",
     "base",
+    "aeson",
     "base64-bytestring",
     "bytestring",
     "cborg",
@@ -16,6 +16,7 @@ haskell_packages = [
     "cryptonite",
     "hashable",
     "hedgehog",
+    "http-media",
     "memory",
     "mtl",
     "natural-transformation",
@@ -25,11 +26,14 @@ haskell_packages = [
     "servant-client",
     "servant-server",
     "stm",
+    "swagger2",
+    "template-haskell",
     "text",
     "transformers",
     "recursion-schemes",
     "lens",
-    "deriving-compat"
+    "deriving-compat",
+    "newtype-generics",
 ]
 
 binary_packages = [

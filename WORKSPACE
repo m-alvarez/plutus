@@ -28,28 +28,57 @@ nixpkgs_package(
     attribute_path = "ghc",
     nix_file_content = """
       let
-        localLib = import ./lib.nix;
-        localPackages = import ./. { pkgsGenerated = <pkgsGenerated>; 
-                                     requiredOverlay = <requiredOverlay>;
-                                     errorOverlayPath = <errorOverlay>; };
-        pkgs = localPackages.pkgs;
-        plutusPkgs = map (x: localPackages.localPackages.${x}) localLib.plutusPkgList;
-        haskellLib = pkgs.haskell.lib;
-        packageInputs = map haskellLib.getBuildInputs plutusPkgs;
-        haskellInputs = pkgs.lib.filter
-          (input: pkgs.lib.all (p: input.outPath != p.outPath) plutusPkgs)
-          (pkgs.lib.concatMap (p: p.haskellBuildInputs) packageInputs);
-        ghc = localPackages.haskellPackages.ghcWithPackages (p: 
-          haskellInputs
-        );
+        forceDontCheck = false;
+        enableProfiling = false;
+        enableSplitCheck = true;
+        enableDebugging = false;
+        enableBenchmarks = true;
+        enablePhaseMetrics = true;
+        enableHaddockHydra = true;
+        fasterBuild = false;
+        forceError = true;
+        localLib = import ./lib.nix {};
+        # This is the stackage LTS plus overrides, plus the plutus
+        # packages.
+        haskellPackages = let
+          errorOverlay = import <errorOverlay> {
+            pkgs = localLib.pkgs;
+            filter = localLib.isPlutus;
+          };
+        customOverlays = with localLib.pkgs.lib; optional forceError errorOverlay;
+        in localLib.pkgs.callPackage localLib.iohkNix.haskellPackages {
+          inherit forceDontCheck enableProfiling enablePhaseMetrics
+          enableHaddockHydra enableBenchmarks fasterBuild enableDebugging
+          enableSplitCheck customOverlays;
+          pkgsGenerated = <pkgsGenerated>;
+          filter = localLib.isPlutus;
+          filterOverrides = {
+            splitCheck = let
+              dontSplit = [
+                # Broken for things with test tool dependencies
+                "wallet-api"
+                "plutus-tx"
+                # Broken for things which pick up other files at test runtime
+                "plutus-playground-server"
+              ];
+              # Split only local packages not in the don't split list
+              doSplit = builtins.filter (name: !(builtins.elem name dontSplit)) localLib.plutusPkgList;
+              in name: builtins.elem name doSplit;
+          };
+          requiredOverlay = <requiredOverlay>;
+        };
       in
-        pkgs // { inherit ghc; }
+        {ghc = haskellPackages.ghcWithPackages (ps: [
+          haskellPackages.plutus-playground-server
+          haskellPackages.plutus-playground-lib
+          haskellPackages.plutus-use-cases
+        ]);}
       """,
     nix_file_deps = [
         "@//:lib.nix",
         "@//:default.nix",
     ],
-    repositories = { 
+    repositories = {
       "pkgsGenerated" : "//:pkgs/default.nix",
       "requiredOverlay" : "//:nix/overlays/required.nix",
       "errorOverlay" : "//:nix/overlays/force-error.nix",
@@ -63,7 +92,8 @@ nixpkgs_package(
     # when no extra packages needed.
     nix_file_content = """
       let
-        localPackages = import ./. { pkgsGenerated = <pkgsGenerated>; requiredOverlay = <requiredOverlay>; };
+        localLib = import ./lib.nix {};
+        localPackages = import ./default.nix { pkgs = localLib.pkgs; };
         pkgs = localPackages.pkgs;
       in
         pkgs
@@ -72,7 +102,7 @@ nixpkgs_package(
         "@//:lib.nix",
         "@//:default.nix",
     ],
-    repositories = { 
+    repositories = {
       "pkgsGenerated" : "//:pkgs/default.nix",
       "requiredOverlay" : "//:nix/overlays/required.nix",
       "errorOverlay" : "//:nix/overlays/force-error.nix",
@@ -86,9 +116,8 @@ nixpkgs_package(
     # when no extra packages needed.
     nix_file_content = """
       let
-        localPackages = import ./. { pkgsGenerated = <pkgsGenerated>; 
-                                     requiredOverlay = <requiredOverlay>;
-                                     errorOverlayPath = <errorOverlay>; };
+        localLib = import ./lib.nix {};
+        localPackages = import ./default.nix { pkgs = localLib.pkgs; };
         pkgs = localPackages.pkgs;
       in
         pkgs
@@ -107,11 +136,11 @@ nixpkgs_package(
 nixpkgs_package(
     name = "hlint",
     nix_file_content = """
-      with import ./lib.nix;
       let
-        localPackages = import ./. { pkgsGenerated = <pkgsGenerated>; };
+        localLib = import ./lib.nix {};
+        localPackages = import ./default.nix { pkgs = localLib.pkgs; };
         pkgs = localPackages.pkgs;
-        script = (import iohkNix.tests.hlintScript {inherit pkgs;});
+        script = (import localLib.iohkNix.tests.hlintScript {inherit pkgs;});
       in
         pkgs.stdenv.mkDerivation {
           name = "hlintScript";
@@ -136,11 +165,11 @@ nixpkgs_package(
 nixpkgs_package(
     name = "stylish-haskell",
     nix_file_content = """
-      with import ./lib.nix;
       let
-        localPackages = import ./. { pkgsGenerated = <pkgsGenerated>; };
+        localLib = import ./lib.nix {};
+        localPackages = import ./default.nix { pkgs = localLib.pkgs; };
         pkgs = localPackages.pkgs;
-        script = (import iohkNix.tests.stylishHaskellScript {inherit pkgs;});
+        script = (import localLib.iohkNix.tests.stylishHaskellScript {inherit pkgs;});
       in
         pkgs.stdenv.mkDerivation {
           name = "stylishHaskellScript";
@@ -165,11 +194,11 @@ nixpkgs_package(
 nixpkgs_package(
     name = "shellcheck",
     nix_file_content = """
-      with import ./lib.nix;
       let
-        localPackages = import ./. { pkgsGenerated = <pkgsGenerated>; };
+        localLib = import ./lib.nix {};
+        localPackages = import ./default.nix { pkgs = localLib.pkgs; };
         pkgs = localPackages.pkgs;
-        script = (import iohkNix.tests.shellcheckScript {inherit pkgs;});
+        script = (import localLib.iohkNix.tests.shellcheckScript {inherit pkgs;});
       in
         pkgs.stdenv.mkDerivation {
           name = "shellcheckScript";

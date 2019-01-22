@@ -7,21 +7,19 @@ load(
 
 haskell_packages = [
     "base",
-    "bytestring",
     "containers",
-    "language-plutus-core",
     "lens",
     "mtl",
     "mmorph",
     "prettyprinter",
+    "serialise",
     "text",
     "transformers",
-    "algebraic-graphs"
+    "algebraic-graphs",
 ]
 
 test_packages = [
     "base",
-    "language-plutus-core",
     "bytestring",
     "mtl",
     "mmorph",

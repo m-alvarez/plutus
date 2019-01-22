@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
@@ -6,6 +7,7 @@ module Main (main) where
 
 import qualified Bazel.Runfiles                       as Runfiles
 import           Common
+import qualified Control.Exception as E
 import           PlcTestUtils
 import           TestLib
 
@@ -39,7 +41,7 @@ import           Data.Functor.Identity
 
 main :: IO ()
 main = do
-    mr <- Runfiles.createMaybe
+    mr <- E.catch (Just <$> Runfiles.create) (\(e :: E.SomeException) -> pure Nothing)
     let testDir = case mr of
           Just r  -> Runfiles.rlocation r "plutus/plutus-ir/"
           Nothing -> "."
