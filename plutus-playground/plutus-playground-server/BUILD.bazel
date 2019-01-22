@@ -1,0 +1,170 @@
+load(
+    "@io_tweag_rules_haskell//haskell:haskell.bzl",
+    "haskell_import",
+    "haskell_library",
+    "haskell_test",
+    "haskell_binary",
+)
+
+haskell_packages = [
+    "aeson",
+    "base",
+    "bytestring",
+    "containers",
+    "cryptonite",
+    "data-default-class",
+    "directory",
+    "exceptions",
+    "file-embed",
+    "gitrev",
+    "hint",
+    "bifunctors",
+    "http-types",
+    "insert-ordered-containers",
+    "lens",
+    "monad-logger",
+    "mtl",
+    "transformers",
+    "newtype-generics",
+    "process",
+    "purescript-bridge",
+    "regex-compat",
+    "scientific",
+    "servant",
+    "servant-foreign",
+    "servant-options",
+    "servant-server",
+    "swagger2",
+    "template-haskell",
+    "temporary",
+    "text",
+    "wai",
+    "wai-cors",
+    "wai-extra",
+    "warp",
+]
+
+test_packages = [
+    "base",
+    "bytestring",
+    "mtl",
+    "mmorph",
+    "text",
+    "prettyprinter",
+    "tasty",
+    "tasty-hunit",
+    "tasty-golden",
+]
+
+binary_packages = [
+    "aeson",
+    "base",
+    "bytestring",
+    "containers",
+    "cryptonite",
+    "data-default-class",
+    "filepath",
+    "file-embed",
+    "gitrev",
+    "hspec",
+    "http-media",
+    "http-types",
+    "insert-ordered-containers",
+    "lens",
+    "monad-logger",
+    "mtl",
+    "network",
+    "optparse-applicative",
+    "purescript-bridge",
+    "process",
+    "scientific",
+    "servant",
+    "servant-foreign",
+    "servant-options",
+    "servant-purescript",
+    "servant-server",
+    "swagger2",
+    "text",
+    "transformers",
+    "wai",
+    "wai-cors",
+    "wai-extra",
+    "warp",
+]
+
+[
+    haskell_import(name = name)
+    for name in (list(depset(haskell_packages + test_packages + binary_packages)))
+]
+
+haskell_library(
+    name = "plutus-playground-server",
+    srcs = glob([
+        "src/**/*.hs",
+        "src/**/*.hs-boot",
+    ]),
+    compiler_flags = [
+        "-XExplicitForAll",
+        "-XScopedTypeVariables",
+        "-XDeriveGeneric",
+        "-XStandaloneDeriving",
+        "-XDeriveLift",
+        "-XGeneralizedNewtypeDeriving",
+        "-XDeriveFunctor",
+        "-XDeriveFoldable",
+        "-XDeriveTraversable",
+    ],
+    visibility = ["//visibility:public"],
+    src_strip_prefix = "src",
+    deps = [":" + name for name in haskell_packages] + [
+        "//plutus-playground/plutus-playground-lib:plutus-playground-lib",
+        "//wallet-api:wallet-api",
+    ],
+)
+
+haskell_binary(
+    name = "plutus-playground-server-app",
+    srcs = glob([
+        "app/*.hs",
+    ]),
+    src_strip_prefix = "app",
+    visibility = ["//visibility:public"],
+    deps = [":" + name for name in binary_packages] + [
+        ":plutus-playground-server",
+        "//plutus-playground/plutus-playground-lib:plutus-playground-lib",
+        "//wallet-api:wallet-api",
+    ],
+)
+
+haskell_test(
+    name = "plutus-playground-lib-test",
+    srcs = glob([
+        "test/**/*.hs",
+    ]),
+    src_strip_prefix = "test",
+    data = glob([
+      "test/**/*",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [":" + name for name in test_packages] + [
+        "//language-plutus-core:language-plutus-core",
+        "//runfiles:runfiles",
+        ":plutus-ir",
+    ],
+)
+
+sh_test(
+    name = "hlint",
+    srcs = ["@hlint//:bin/run.sh"],
+    args = ["."],
+    deps = ["//:hlint_lib"],
+    data = glob(["**/*.hs"], exclude = ["**/.stack-work/**"]),
+)
+
+sh_test(
+    name = "stylish",
+    srcs = ["@stylish-haskell//:bin/run.sh"],
+    args = ["plutus-ir"],
+    deps = ["//:stylish_haskell_lib"],
+    data = glob(["**/*.hs"], exclude = ["**/.stack-work/**"]),
+)

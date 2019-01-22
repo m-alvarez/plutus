@@ -6,23 +6,39 @@ load(
 )
 
 haskell_packages = [
+    "aeson",
     "base",
+    "base64-bytestring",
     "bytestring",
     "containers",
+    "hint",
+    "http-media",
+    "insert-ordered-containers",
+    "memory",
     "mtl",
-    "template-haskell",
     "transformers",
     "lens",
+    "network",
+    "newtype-generics",
+    "servant",
+    "split",
+    "swagger2",
+    "template-haskell",
+    "text",
+
 ]
 
 test_packages = [
     "base",
-    "containers",
-    "hedgehog",
-    "tasty",
-    "tasty-hedgehog",
+    "bytestring",
+    "mtl",
+    "mmorph",
     "text",
-    "template-haskell",
+    "prettyprinter",
+    "tasty",
+    "tasty-hunit",
+    "tasty-golden",
+    "bazel-runfiles",
 ]
 
 [
@@ -31,9 +47,10 @@ test_packages = [
 ]
 
 haskell_library(
-    name = "plutus-use-cases",
+    name = "plutus-playground-lib",
     srcs = glob([
         "src/**/*.hs",
+        "src/**/*.hs-boot",
     ]),
     compiler_flags = [
         "-XExplicitForAll",
@@ -46,28 +63,29 @@ haskell_library(
         "-XDeriveFoldable",
         "-XDeriveTraversable",
     ],
+    visibility = ["//visibility:public"],
     src_strip_prefix = "src",
     deps = [":" + name for name in haskell_packages] + [
-        "//language-plutus-core:language-plutus-core",
         "//plutus-tx:plutus-tx",
-        "//wallet-api:wallet-api",
         "//plutus-tx-plugin:plutus-tx-plugin",
+        "//plutus-use-cases:plutus-use-cases",
+        "//wallet-api:wallet-api",
     ],
-    visibility = ["//visibility:public"],
 )
+
 haskell_test(
-    name = "plutus-use-cases-test",
+    name = "plutus-playground-lib-test",
     srcs = glob([
         "test/**/*.hs",
-        "test/Spec.hs"
     ]),
     src_strip_prefix = "test",
+    data = glob([
+      "test/**/*",
+    ]),
     visibility = ["//visibility:public"],
     deps = [":" + name for name in test_packages] + [
-        "//plutus-tx-plugin:plutus-tx-plugin",
-        "//plutus-tx:plutus-tx",
-        "//wallet-api:wallet-api",
-        ":plutus-use-cases",
+        "//language-plutus-core:language-plutus-core",
+        ":plutus-ir",
     ],
 )
 
@@ -82,7 +100,7 @@ sh_test(
 sh_test(
     name = "stylish",
     srcs = ["@stylish-haskell//:bin/run.sh"],
-    args = ["plutus-use-cases"],
+    args = ["plutus-ir"],
     deps = ["//:stylish_haskell_lib"],
     data = glob(["**/*.hs"], exclude = ["**/.stack-work/**"]),
 )

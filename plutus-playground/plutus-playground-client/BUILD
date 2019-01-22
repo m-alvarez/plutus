@@ -1,9 +1,27 @@
 load("@bazel_rules_purescript//purescript:purescript.bzl", "purescript_library", "purescript_bundle")
 load("@build_bazel_rules_nodejs//:defs.bzl", "nodejs_binary")
 
+generated_files = [ "Ledger/Index.purs"
+                  , "Ledger/Types.purs"
+                  , "Playground/Usecases.purs"
+                  , "Playground/API.purs"
+                  , "Playground/Server.purs"
+                  , "Wallet/Graph.purs"
+                  , "Wallet/API.purs"
+                  , "Wallet/Emulator/Types.purs"
+                  ]
+
+genrule(
+    name = "psgenerator",
+    srcs = [],
+    outs = generated_files,
+    cmd = "$(location //plutus-playground/plutus-playground-server:plutus-playground-server-app) psgenerator $(@D)",
+    tools = ["//plutus-playground/plutus-playground-server:plutus-playground-server-app"],
+)
+
 purescript_library(
     name = "playground_purs",
-    srcs = glob(["src/**/*.purs"]) + glob(["src/**/*.js"]) + glob(["generated/**/*.purs"]),
+    srcs = glob(["src/**/*.purs"]) + glob(["src/**/*.js"]) + glob(["generated/**/*.purs"]) + generated_files,
     deps = [
         "@purescript-ace-halogen//:pkg",
         "@purescript-ace//:pkg",
@@ -25,7 +43,7 @@ purescript_library(
 
 purescript_bundle(
   name = "playground_bundle",
-  srcs = ["//static:static_files"],
+  srcs = ["//plutus-playground/plutus-playground-client/static:static_files"],
   entry = "entry-bazel.js",
   config = "webpack-bazel.config.js",
   deps = [":playground_purs"],
