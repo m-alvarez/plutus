@@ -133,7 +133,7 @@ Before we check whether `act` is permitted, we define a number of intermediate v
                   (&&) = $$(P.and)
 
                   signedBy :: PubKey -> Signature -> Bool
-                  signedBy (PubKey pk) (Signature s) = pk == s
+                  signedBy (PubKey pk) (Signature s) = $$(P.eq) pk s
 ```
 
 There is no standard library of functions that are automatically in scope for on-chain code, so we need to import the ones that we want to use from the `Validation` module using the `\$\$()` splicing operator.
@@ -158,7 +158,7 @@ Then we compute the total value of all transaction inputs, using `P.foldr` on th
                   totalInputs :: Int
                   totalInputs =
                       let v (PendingTxIn _ _ (Value vl)) = vl in
-                      $$(P.foldr) (\i total -> total + v i) 0 ins
+                      $$(P.foldr) (\i total -> $$(P.plus) total (v i)) 0 ins
 ```
 
 We now have all the information we need to check whether the action `act` is allowed. This will be computed as
@@ -212,7 +212,7 @@ In the `Collect` case, the current slot must be between `deadline` and `collecti
 
 ```haskell
                           $$(P.contains) ($$(P.interval) deadline collectionDeadline) txnValidRange &&
-                          totalInputs >= target &&
+                          $$(P.geq) totalInputs target &&
                           campaignOwner `signedBy` sig
 
               in
