@@ -432,16 +432,19 @@ def _purescript_bundle(ctx):
         tools = [webpack, zipper],
         command = """
         set -e
+        export WORKSPACE=$(pwd)
+        export PROJECT_DIR=$(dirname {build_file})
         zips=({zips})
+        cd $PROJECT_DIR
         for f in "${{zips[@]}}"; do
-          {zipper} x $f -d ./deps
+          $WORKSPACE/{zipper} x $WORKSPACE/$f -d ./deps
         done
-        ln -s {node_modules} .
-        {webpack} --config {config} --display errors-only
+        ln -s $WORKSPACE/{node_modules} .
+        $WORKSPACE/{webpack} --config $(basename {config}) --display errors-only
         for file in $(find dist -type f); do
           files_to_zip="$files_to_zip${{file#dist/}}=$file "
         done
-        {zipper} c {output} $files_to_zip
+        $WORKSPACE/{zipper} c $WORKSPACE/{output} $files_to_zip
         """.format(webpack = webpack.path,
                    config = ctx.file.config.path,
                    entry = ctx.file.entry.path,
@@ -449,6 +452,7 @@ def _purescript_bundle(ctx):
                    zipper = zipper.path,
                    zips = " ".join([z.path for deps in [dep[OutputGroupInfo].output_zip.to_list() for dep in ctx.attr.deps] for z in deps]),
                    output = output.path,
+                   build_file = ctx.build_file_path,
                    ),
         arguments = [],
         outputs = [output],

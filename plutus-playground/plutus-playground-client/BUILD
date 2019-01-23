@@ -1,15 +1,16 @@
-load("@bazel_rules_purescript//purescript:purescript.bzl", "purescript_library", "purescript_bundle")
+load("@bazel_rules_purescript//purescript:purescript.bzl", "purescript_bundle", "purescript_library")
 load("@build_bazel_rules_nodejs//:defs.bzl", "nodejs_binary")
 
-generated_files = [ "Ledger/Index.purs"
-                  , "Ledger/Types.purs"
-                  , "Playground/Usecases.purs"
-                  , "Playground/API.purs"
-                  , "Playground/Server.purs"
-                  , "Wallet/Graph.purs"
-                  , "Wallet/API.purs"
-                  , "Wallet/Emulator/Types.purs"
-                  ]
+generated_files = [
+    "Ledger/Index.purs",
+    "Ledger/Types.purs",
+    "Playground/Usecases.purs",
+    "Playground/API.purs",
+    "Playground/Server.purs",
+    "Wallet/Graph.purs",
+    "Wallet/API.purs",
+    "Wallet/Emulator/Types.purs",
+]
 
 genrule(
     name = "psgenerator",
@@ -38,17 +39,17 @@ purescript_library(
         "@purescript-servant-support//:pkg",
         "@purescript-transformers//:pkg",
         "@purescript-undefinable//:pkg",
-    ]
+    ],
 )
 
 purescript_bundle(
-  name = "playground_bundle",
-  srcs = ["//plutus-playground/plutus-playground-client/static:static_files"],
-  entry = "entry-bazel.js",
-  config = "webpack-bazel.config.js",
-  deps = [":playground_purs"],
-  node_modules = "@npm//:node_modules",
-  webpack = "@npm//webpack-cli/bin:webpack-cli",
+    name = "playground_bundle",
+    srcs = ["//plutus-playground/plutus-playground-client/static:static_files"],
+    config = "webpack-bazel.config.js",
+    entry = "entry-bazel.js",
+    node_modules = "@npm//:node_modules",
+    webpack = "@npm//webpack-cli/bin:webpack-cli",
+    deps = [":playground_purs"],
 )
 
 # nodejs_binary(
