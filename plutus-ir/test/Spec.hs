@@ -73,11 +73,11 @@ tests = testGroup "plutus-ir" <$> sequence [
     ]
 
 prettyprinting :: TestNested
-prettyprinting = testNested "prettyprinting" [
-    goldenPir "basic" basic
-    , goldenPir "maybe" maybePir
-    , goldenPir' prettyText term "basic"
+prettyprinting = testNested "prettyprinting"
+    [ goldenPir' prettyText term "basic"
     , goldenPir' prettyText term "maybe"
+    --, goldenPir "basic" basic
+    --, goldenPir "maybe" maybePir
     ]
 
 basic :: Term TyName Name ()
@@ -129,6 +129,7 @@ listMatch = runQuote $ do
 
 datatypes :: TestNested
 datatypes = testNested "datatypes" [
+    goldenPir' id program "maybe",
     goldenPlc "maybe" maybePir,
     goldenPlc "listMatch" listMatch,
     goldenEval "listMatchEval" [listMatch]

@@ -21,7 +21,7 @@ import           Data.Text.Prettyprint.Doc
 goldenPir :: Pretty a => String -> a -> TestNested
 goldenPir name value = nestedGoldenVsDoc name $ pretty value
 
-goldenPir' :: (a -> T.Text) -> Parser a -> String -> TestNested
+goldenPir' :: Pretty b => (a -> b) -> Parser a -> String -> TestNested
 goldenPir' op parser name = do
     currentPath <- Reader.ask
     let filename = foldr (</>) (name ++ ".plc") currentPath
@@ -29,7 +29,7 @@ goldenPir' op parser name = do
                 code <- T.readFile filename
                 return $ case parse parser name code of
                     Left err  -> T.pack $ parseErrorPretty err
-                    Right ast -> op ast
+                    Right ast -> prettyText $ op ast
     nestedGoldenVsTextM name result
 
 maybeDatatype :: Quote (Datatype TyName Name ())
