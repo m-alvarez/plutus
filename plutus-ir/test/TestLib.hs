@@ -2,14 +2,35 @@
 module TestLib where
 
 import           Common
+import           PlutusPrelude             (prettyText)
+
+import qualified Control.Monad.Reader      as Reader
 
 import           Language.PlutusCore.Quote
 import           Language.PlutusIR
+import           Language.PlutusIR.Parser
 
+import           System.FilePath           ((</>))
+
+import           Text.Megaparsec.Error
+
+import qualified Data.Text                 as T
+import qualified Data.Text.IO              as T
 import           Data.Text.Prettyprint.Doc
 
-goldenPir :: String -> Term TyName Name a -> TestNested
+goldenPir :: Pretty a => String -> a -> TestNested
 goldenPir name value = nestedGoldenVsDoc name $ pretty value
+
+goldenPir' :: (a -> T.Text) -> Parser a -> String -> TestNested
+goldenPir' op parser name = do
+    currentPath <- Reader.ask
+    let filename = foldr (</>) (name ++ ".plc") currentPath
+        result = do
+                code <- T.readFile filename
+                return $ case parse parser name code of
+                    Left err  -> T.pack $ parseErrorPretty err
+                    Right ast -> op ast
+    nestedGoldenVsTextM name result
 
 maybeDatatype :: Quote (Datatype TyName Name ())
 maybeDatatype = do

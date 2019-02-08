@@ -6,6 +6,7 @@ module Main (main) where
 
 import           Common
 import           PlcTestUtils
+import           PlutusPrelude                        (prettyText)
 import           TestLib
 
 import           OptimizerSpec
@@ -17,6 +18,7 @@ import           Language.PlutusCore.Quote
 import           Language.PlutusIR
 import           Language.PlutusIR.Compiler
 import           Language.PlutusIR.MkPir
+import           Language.PlutusIR.Parser
 
 import qualified Language.PlutusCore                  as PLC
 
@@ -35,7 +37,9 @@ import           Control.Monad.Except
 import           Control.Monad.Morph
 import           Control.Monad.Reader
 
+import           Data.Either
 import           Data.Functor.Identity
+import qualified Data.Text                            as T
 
 main :: IO ()
 main = defaultMain $ runTestNestedIn ["test"] tests
@@ -72,6 +76,8 @@ prettyprinting :: TestNested
 prettyprinting = testNested "prettyprinting" [
     goldenPir "basic" basic
     , goldenPir "maybe" maybePir
+    , goldenPir' prettyText term "basic"
+    , goldenPir' prettyText term "maybe"
     ]
 
 basic :: Term TyName Name ()
