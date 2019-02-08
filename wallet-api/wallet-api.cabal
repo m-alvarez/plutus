@@ -80,6 +80,7 @@ library
         bytestring -any,
         cborg -any,
         containers -any,
+        exceptions -any,
         plutus-tx -any,
         cryptonite >=0.25,
         hashable -any,

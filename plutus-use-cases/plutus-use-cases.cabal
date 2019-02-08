@@ -61,6 +61,10 @@ test-suite plutus-use-cases-test
         Spec.MultiSig
         Spec.Size
         Spec.Vesting
+        LTL
+        LTL.Utils
+        LTL.Spec.Crowdfunding
+        LTL.Spec.Game
     default-language: Haskell2010
     ghc-options: -Wall -Wnoncanonical-monad-instances
                  -Wincomplete-uni-patterns -Wincomplete-record-updates
@@ -69,6 +73,7 @@ test-suite plutus-use-cases-test
         base >=4.9 && <5,
         containers -any,
         hedgehog -any,
+        mtl -any,
         tasty -any,
         tasty-hunit -any,
         tasty-hedgehog >=0.2.0.0,
@@ -77,3 +82,16 @@ test-suite plutus-use-cases-test
         plutus-use-cases -any,
         lens -any,
         mtl -any
+        plutus-use-cases,
+        plutus-tx -any,
+        template-haskell -any,
+        QuickCheck -any,
+        quickcheck-state-machine -any,
+        exceptions -any,
+        tasty-quickcheck -any,
+        tree-diff -any,
+        lens -any
+  ghc-options:
+    -Wall -Wnoncanonical-monad-instances
+    -Wincomplete-uni-patterns -Wincomplete-record-updates
+    -Wredundant-constraints -Widentities

@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 module Main(main) where
 
 import qualified Spec.Crowdfunding
@@ -27,5 +26,9 @@ tests = localOption limit $ testGroup "use cases" [
     Spec.Future.tests,
     Spec.Game.tests,
     Spec.MultiSig.tests,
-    Spec.Currency.tests
-    ]
+    Spec.Currency.tests,
+    Spec.Currency.tests,
+    testGroup "property tests" [
+            testProperty "crowdfunding" LTL.Spec.Crowdfunding.test,
+            testProperty "game" LTL.Spec.Game.test
+    ]]

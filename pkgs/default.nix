@@ -53512,14 +53512,18 @@ license = stdenv.lib.licenses.asl20;
 , base
 , bytestring
 , containers
+, exceptions
 , hedgehog
 , lens
 , mtl
 , plutus-tx
+, QuickCheck
+, quickcheck-state-machine
 , stdenv
 , tasty
 , tasty-hedgehog
 , tasty-hunit
+, tasty-quickcheck
 , template-haskell
 , text
 , wallet-api
@@ -53542,12 +53546,18 @@ wallet-api
 testHaskellDepends = [
 base
 containers
+exceptions
 hedgehog
 lens
 mtl
+plutus-tx
+QuickCheck
+quickcheck-state-machine
 tasty
 tasty-hedgehog
 tasty-hunit
+tasty-quickcheck
+template-haskell
 text
 wallet-api
 ];
@@ -56371,8 +56381,8 @@ license = stdenv.lib.licenses.mit;
 mkDerivation {
 
 pname = "quickcheck-state-machine";
-version = "0.4.3";
-sha256 = "3d2b858e43764da5b9d390048e43ef91a4128b75a1921a8a7f68299ba1d43039";
+version = "0.6.0";
+sha256 = "3e5f7199282c185986eedbf7cd22e2c68d4ec6ef24bec80c27a33429c555727d";
 libraryHaskellDepends = [
 ansi-wl-pprint
 base
@@ -75965,6 +75975,7 @@ license = stdenv.lib.licenses.mit;
 , containers
 , cryptonite
 , deriving-compat
+, exceptions
 , hashable
 , hedgehog
 , http-api-data
@@ -76009,6 +76020,7 @@ cborg
 containers
 cryptonite
 deriving-compat
+exceptions
 hashable
 hedgehog
 http-api-data

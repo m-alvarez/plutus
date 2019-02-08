@@ -121,6 +121,8 @@ eval clientEnv =
         (fmap snd . runWalletAction clientEnv wallet . liftWallet . handleNotification)
         trigger
     BlockchainProcessPending -> ExceptT $ runClientM processPending clientEnv
+    -- TODO: make sure this is correct
+    -- CaughtException e a -> eval clientEnv a
     Assertion a -> ExceptT $ runClientM (assert a) clientEnv
 
 process :: ClientEnv -> Trace WalletClient a -> ExceptT ServantError IO a

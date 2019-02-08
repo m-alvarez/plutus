@@ -1,0 +1,223 @@
+use cases
+  property tests
+    game: 
+[37mInitial[0m
+
+   == Block ==> Blockchain
+	BLOCK
+		Tx {txInputs = fromList [], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})},TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}], txForge = Value {getValue = Map {unMap = [(,Map {unMap = [(,30000)]})]}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList []}
+UTXO
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 0} => TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 2} => TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}
+Wallet states
+	1 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	2 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	3 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+Events
+	SlotAdd (Slot {getSlot = 1})
+	TxnValidate (TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11})
+ [ 0 ]
+
+[41m[97m-Initial[0;41m[0m
+[42m[97m+State (Phase []
+          Nothing
+          Nothing)
+   (Or (InSequence (`correct guess`
+                      Atom)
+          (payout Atom))
+      (Always
+         (`no correct guesses so far`
+            Atom)))[0;42m[0m
+
+   == Start game Wallet {getWallet = 2} ==> Blockchain
+	BLOCK
+		Tx {txInputs = fromList [], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})},TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}], txForge = Value {getValue = Map {unMap = [(,Map {unMap = [(,30000)]})]}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList []}
+UTXO
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 0} => TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 2} => TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}
+Wallet states
+	1 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	2 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	3 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+Events
+	SlotAdd (Slot {getSlot = 1})
+	TxnValidate (TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11})
+ [ 0 ]
+
+State (Phase [[42m[97m+Wallet 2[0;42m[0m]
+         [37mNothing[0m
+         [37mNothing[0m)
+  [37m(Or (InSequence (`correct guess`
+                     Atom)
+         (payout Atom))
+     (Always
+        (`no correct guesses so far`
+           Atom)))[0m
+
+   == Lock funds (Wallet {getWallet = 1},Ada {getAda = 33},"") ==> Blockchain
+	BLOCK
+		Tx {txInputs = fromList [TxInOf {txInRef = TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 0}, txInType = ConsumePublicKeyAddress (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = 53c88eaa192b7a09d1199264a511e34afe5d2f28f0e33cce8fcb1fcd2567f8e2}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToScript DataScript { <script> }}], txForge = Value {getValue = Map {unMap = []}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList [(PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c},Signature {getSignature = SizedByteString {unSizedByteString = "\132\184\217\148\187{\147\226\161e^\243+DQ\231\139J\154\132w1Um\f\165+\144\160\158\CAN\254\234\&0\132\STX\203H\190\181\160P\f\224R\164q\169T(\202\245\GS\151\157;\218\n7\131\251X\162\t"}})]}
+	BLOCK
+		Tx {txInputs = fromList [], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})},TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}], txForge = Value {getValue = Map {unMap = [(,Map {unMap = [(,30000)]})]}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList []}
+UTXO
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 0} => TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = 53c88eaa192b7a09d1199264a511e34afe5d2f28f0e33cce8fcb1fcd2567f8e2}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToScript DataScript { <script> }}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 2} => TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}
+Wallet states
+	1 => Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}
+	2 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	3 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+Events
+	SlotAdd (Slot {getSlot = 2})
+	TxnValidate (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	TxnSubmit (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	SlotAdd (Slot {getSlot = 1})
+	TxnValidate (TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11})
+ [ 0 ]
+
+State (Phase [37m[Wallet 2][0m
+         [41m[97m-Nothing[0;41m[0m
+         [42m[97m+(Just (_×_×_ (Wallet 1)
+                   (Ada 33)
+                   ""))[0;42m[0m
+         [37mNothing[0m)
+  [37m(Or (InSequence (`correct guess`
+                     Atom)
+         (payout Atom))
+     (Always
+        (`no correct guesses so far`
+           Atom)))[0m
+
+   == Guess Wallet {getWallet = 2} "" ==> Blockchain
+	BLOCK
+		Tx {txInputs = fromList [TxInOf {txInRef = TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 0}, txInType = ConsumePublicKeyAddress (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = 53c88eaa192b7a09d1199264a511e34afe5d2f28f0e33cce8fcb1fcd2567f8e2}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToScript DataScript { <script> }}], txForge = Value {getValue = Map {unMap = []}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList [(PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c},Signature {getSignature = SizedByteString {unSizedByteString = "\132\184\217\148\187{\147\226\161e^\243+DQ\231\139J\154\132w1Um\f\165+\144\160\158\CAN\254\234\&0\132\STX\203H\190\181\160P\f\224R\164q\169T(\202\245\GS\151\157;\218\n7\131\251X\162\t"}})]}
+	BLOCK
+		Tx {txInputs = fromList [], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})},TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}], txForge = Value {getValue = Map {unMap = [(,Map {unMap = [(,30000)]})]}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList []}
+UTXO
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 0} => TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = 53c88eaa192b7a09d1199264a511e34afe5d2f28f0e33cce8fcb1fcd2567f8e2}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToScript DataScript { <script> }}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 2} => TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}
+Wallet states
+	1 => Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}
+	2 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	3 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+Events
+	TxnSubmit (TxIdOf {getTxId = 6b464e4ba3a31a1323f2a7e430022d313257ded48a3302406d1d7b0a5186a2db})
+	SlotAdd (Slot {getSlot = 2})
+	TxnValidate (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	TxnSubmit (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	SlotAdd (Slot {getSlot = 1})
+	TxnValidate (TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11})
+ [ 0 ]
+
+State (Phase [37m[Wallet 2][0m
+         [37m(Just (_×_×_ (Wallet 1)
+                  (Ada 33)
+                  ""))[0m
+         [41m[97m-Nothing[0;41m[0m
+         [42m[97m+(Just (Wallet 2))[0;42m[0m)
+  [37m(Or (InSequence (`correct guess`
+                     Atom)
+         (payout Atom))
+     (Always
+        (`no correct guesses so far`
+           Atom)))[0m
+
+   == Guess Wallet {getWallet = 1} "" ==> Blockchain
+	BLOCK
+		Tx {txInputs = fromList [TxInOf {txInRef = TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 0}, txInType = ConsumePublicKeyAddress (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = 53c88eaa192b7a09d1199264a511e34afe5d2f28f0e33cce8fcb1fcd2567f8e2}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToScript DataScript { <script> }}], txForge = Value {getValue = Map {unMap = []}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList [(PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c},Signature {getSignature = SizedByteString {unSizedByteString = "\132\184\217\148\187{\147\226\161e^\243+DQ\231\139J\154\132w1Um\f\165+\144\160\158\CAN\254\234\&0\132\STX\203H\190\181\160P\f\224R\164q\169T(\202\245\GS\151\157;\218\n7\131\251X\162\t"}})]}
+	BLOCK
+		Tx {txInputs = fromList [], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})},TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}], txForge = Value {getValue = Map {unMap = [(,Map {unMap = [(,30000)]})]}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList []}
+UTXO
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 0} => TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = 53c88eaa192b7a09d1199264a511e34afe5d2f28f0e33cce8fcb1fcd2567f8e2}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToScript DataScript { <script> }}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 2} => TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}
+Wallet states
+	1 => Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}
+	2 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	3 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+Events
+	TxnSubmit (TxIdOf {getTxId = e91b8293582857d79d5a99d4834afab89c170eaf63f5dd1bc7e3a29f62637a70})
+	TxnSubmit (TxIdOf {getTxId = 6b464e4ba3a31a1323f2a7e430022d313257ded48a3302406d1d7b0a5186a2db})
+	SlotAdd (Slot {getSlot = 2})
+	TxnValidate (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	TxnSubmit (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	SlotAdd (Slot {getSlot = 1})
+	TxnValidate (TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11})
+ [ 0 ]
+
+State [37m(Phase [Wallet 2]
+         (Just (_×_×_ (Wallet 1)
+                  (Ada 33)
+                  ""))
+         (Just (Wallet 2)))[0m
+  [41m[97m-(Or (InSequence
+          (`correct guess` Atom)
+          (payout Atom))
+      (Always
+         (`no correct guesses so far`
+            Atom)))[0;41m[0m
+  [42m[97m+(Eventually (payout Atom))[0;42m[0m
+
+   == Block ==> Blockchain
+	BLOCK
+		Tx {txInputs = fromList [TxInOf {txInRef = TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 1}, txInType = ConsumeScriptAddress ValidatorScript { <script> } RedeemerScript { <script> }}], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}], txForge = Value {getValue = Map {unMap = []}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList [(PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c},Signature {getSignature = SizedByteString {unSizedByteString = "\211n\165\&4\n=\209\143\158\DLE\209\&2\156\135N \255\173\213\ENQK\nw&d\SIl3eO!\140M\211\US\129Z\187\SI\239\&0S\252\195\139T\144\217\140`\163??)\RS\231\165\214$\135x\227\EM\EOT"}})]}
+	BLOCK
+		Tx {txInputs = fromList [TxInOf {txInRef = TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 0}, txInType = ConsumePublicKeyAddress (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = 53c88eaa192b7a09d1199264a511e34afe5d2f28f0e33cce8fcb1fcd2567f8e2}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToScript DataScript { <script> }}], txForge = Value {getValue = Map {unMap = []}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList [(PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c},Signature {getSignature = SizedByteString {unSizedByteString = "\132\184\217\148\187{\147\226\161e^\243+DQ\231\139J\154\132w1Um\f\165+\144\160\158\CAN\254\234\&0\132\STX\203H\190\181\160P\f\224R\164q\169T(\202\245\GS\151\157;\218\n7\131\251X\162\t"}})]}
+	BLOCK
+		Tx {txInputs = fromList [], txOutputs = [TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})},TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})},TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}], txForge = Value {getValue = Map {unMap = [(,Map {unMap = [(,30000)]})]}}, txFee = Ada {getAda = 0}, txValidRange = Interval {ivFrom = Nothing, ivTo = Nothing}, txSignatures = fromList []}
+UTXO
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 0} => TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,9967)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 1} => TxOutOf {txOutAddress = AddressOf {getAddress = feb345e86b9c2a7add2bfc695fa8aecd4ac5b0dfaf3a477f6fa968cdd30571c7}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 98a5e3a36e67aaba89888bf093de1ad963e774013b3902bfab356d8b90178a63})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11}, txOutRefIdx = 2} => TxOutOf {txOutAddress = AddressOf {getAddress = 03d200a81ee0feace8fb845e5ec950a6f9add83709244f7b81134654139f41a4}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = fc51cd8e6218a1a38da47ed00230f0580816ed13ba3303ac5deb911548908025})}
+	TxOutRefOf {txOutRefId = TxIdOf {getTxId = e91b8293582857d79d5a99d4834afab89c170eaf63f5dd1bc7e3a29f62637a70}, txOutRefIdx = 0} => TxOutOf {txOutAddress = AddressOf {getAddress = 2721f657e9ed91d2fc2a282f7ff5ed81ae48f48b51061a0aa2faa4b25b5f0322}, txOutValue = Value {getValue = Map {unMap = [(,Map {unMap = [(,33)]})]}}, txOutType = PayToPubKey (PubKey {getPubKey = 3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c})}
+Wallet states
+	1 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	2 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+	3 => Value {getValue = Map {unMap = [(,Map {unMap = [(,10000)]})]}}
+Events
+	SlotAdd (Slot {getSlot = 3})
+	TxnValidate (TxIdOf {getTxId = e91b8293582857d79d5a99d4834afab89c170eaf63f5dd1bc7e3a29f62637a70})
+	TxnValidationFail (TxIdOf {getTxId = 6b464e4ba3a31a1323f2a7e430022d313257ded48a3302406d1d7b0a5186a2db}) (TxOutRefNotFound (TxOutRefOf {txOutRefId = TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531}, txOutRefIdx = 1}))
+	TxnSubmit (TxIdOf {getTxId = e91b8293582857d79d5a99d4834afab89c170eaf63f5dd1bc7e3a29f62637a70})
+	TxnSubmit (TxIdOf {getTxId = 6b464e4ba3a31a1323f2a7e430022d313257ded48a3302406d1d7b0a5186a2db})
+	SlotAdd (Slot {getSlot = 2})
+	TxnValidate (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	TxnSubmit (TxIdOf {getTxId = d58aad6c356483a9fa0b1a378190f77305ded247b87625a2adb409799abe6531})
+	SlotAdd (Slot {getSlot = 1})
+	TxnValidate (TxIdOf {getTxId = e020052932e210d0962d5ea3f7b0df8a7ab305f6ccb5a6e424a2cb9473d12e11})
+ [ 0 ]
+
+[37mState (Phase [Wallet 2]
+         (Just (_×_×_ (Wallet 1)
+                  (Ada 33)
+                  ""))
+         (Just (Wallet 2)))
+  (Eventually (payout Atom))[0m
+
+FAIL (0.21s)
+      *** Failed! Falsifiable (after 8 tests and 5 shrinks):
+      Commands
+        { unCommands =
+            [ Command Block OK []
+            , Command Start game Wallet { getWallet = 2 } OK []
+            , Command
+                Lock
+                funds
+                ( Wallet { getWallet = 1 } , Ada { getAda = 33 } , "" )
+                OK
+                []
+            , Command Guess Wallet { getWallet = 2 } "" OK []
+            , Command Guess Wallet { getWallet = 1 } "" OK []
+            ]
+        }
+      Commands {unCommands = [Command Block OK [],Command Start game Wallet {getWallet = 2} OK [],Command Lock funds (Wallet {getWallet = 1},Ada {getAda = 33},"") OK [],Command Guess Wallet {getWallet = 2} "" OK [],Command Guess Wallet {getWallet = 1} "" OK [],Command Block OK []]}
+      False /= True
+      Use --quickcheck-replay=452621 to reproduce.
+
+1 out of 1 tests failed (0.21s)

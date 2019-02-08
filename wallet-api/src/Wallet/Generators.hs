@@ -9,6 +9,7 @@ module Wallet.Generators(
     Mockchain(..),
     genMockchain,
     genMockchain',
+    initialMockchain,
     emptyChain,
     GeneratorModel(..),
     generatorModel,
@@ -110,13 +111,17 @@ emptyChain = Mockchain [] Map.empty
 genMockchain' :: MonadGen m
     => GeneratorModel
     -> m Mockchain
-genMockchain' gm = do
+genMockchain' = pure . initialMockchain
+
+-- | Generate a mockchain deterministically, avoiding any requirements for a [[MonadGen]].
+-- The resulting mockchain only has an initial transaction featuring the required iniitial balance.
+initialMockchain :: GeneratorModel -> Mockchain
+initialMockchain gm =
     let (txn, ot) = genInitialTransaction gm
         txId = hashTx txn
-    pure Mockchain {
-        mockchainInitialBlock = [txn],
-        mockchainUtxo = Map.fromList $ first (TxOutRefOf txId) <$> zip [0..] ot
-        }
+    in Mockchain { mockchainInitialBlock = [txn]
+                 , mockchainUtxo = Map.fromList $ first (TxOutRefOf txId) <$> zip [0..] ot
+                 }
 
 -- | Generate a mockchain using the default 'GeneratorModel'.
 --

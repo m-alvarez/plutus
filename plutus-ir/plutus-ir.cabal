@@ -2,7 +2,7 @@ cabal-version: 2.0
 name: plutus-ir
 version: 0.1.0.0
 license: Apache-2.0
-license-files: 
+license-files:
   LICENSE
   NOTICE
 maintainer: michael.peyton-jones@iohk.io

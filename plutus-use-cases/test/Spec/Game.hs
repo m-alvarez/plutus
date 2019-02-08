@@ -1,9 +1,12 @@
 module Spec.Game(tests) where
 
 import           Control.Monad                                 (void)
+import           Control.Monad.IO.Class
 import           Data.Either                                   (isRight)
 import           Data.Foldable                                 (traverse_)
 import qualified Data.Map                                      as Map
+import           Data.Maybe
+import           Data.TreeDiff
 
 import           Hedgehog                                      (Property, forAll, property)
 import qualified Hedgehog

@@ -30,6 +30,7 @@ import           Control.Monad.Except
 import           Control.Monad.Morph
 import           Control.Monad.Reader
 
+import           Data.Either
 import           Data.Functor.Identity
 import           Text.Megaparsec.Pos
 
