@@ -6,7 +6,7 @@ module Main (main) where
 
 import           Common
 import           PlcTestUtils
-import           PlutusPrelude                        (prettyText)
+import           PlutusPrelude                        hiding (hoist)
 import           TestLib
 
 import           OptimizerSpec
@@ -40,11 +40,12 @@ import           Control.Monad.Reader
 import           Data.Either
 import           Data.Functor.Identity
 import qualified Data.Text                            as T
+import qualified Data.Text.Prettyprint.Doc            as T
 
 main :: IO ()
 main = defaultMain $ runTestNestedIn ["test"] tests
 
-instance GetProgram (Term TyName Name ()) where
+instance (Pretty a, Typeable a) => GetProgram (Term TyName Name a) where
     getProgram = asIfThrown . fmap (trivialProgram . void) . compileAndMaybeTypecheck True
 
 -- | Adapt an computation that keeps its errors in an 'Except' into one that looks as if it caught them in 'IO'.
@@ -74,8 +75,8 @@ tests = testGroup "plutus-ir" <$> sequence [
 
 prettyprinting :: TestNested
 prettyprinting = testNested "prettyprinting"
-    [ goldenPir' prettyText term "basic"
-    , goldenPir' prettyText term "maybe"
+    [ goldenParse prettyText term "basic"
+    , goldenParse prettyText term "maybe"
     --, goldenPir "basic" basic
     --, goldenPir "maybe" maybePir
     ]
@@ -127,9 +128,12 @@ listMatch = runQuote $ do
                     mkIterLamAbs () [VarDecl () h Unit.unit, VarDecl () t (TyApp () (mkTyVar () l) Unit.unit)] $ Var () h
                 ]
 
+instance Pretty SourcePos where
+    pretty = T.viaShow
+
 datatypes :: TestNested
 datatypes = testNested "datatypes" [
-    goldenPir' id program "maybe",
+    goldenParseGetProgram getProgram term "maybe",
     goldenPlc "maybe" maybePir,
     goldenPlc "listMatch" listMatch,
     goldenEval "listMatchEval" [listMatch]
