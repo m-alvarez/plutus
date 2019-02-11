@@ -1,28 +1,30 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings     #-}
+{-# LANGUAGE PartialTypeSignatures #-}
 module TestLib where
 
 import           Common
-import           PlutusPrelude             (prettyText)
+import           Control.Exception
+import           Control.Monad.Except
+import           PlutusPrelude             hiding ((</>))
 
 import qualified Control.Monad.Reader      as Reader
 
 import           Language.PlutusCore.Quote
 import           Language.PlutusIR
-import           Language.PlutusIR.Parser
+import           Language.PlutusIR.Parser  as Parser
 
 import           System.FilePath           ((</>))
 
-import           Text.Megaparsec.Error
+import           Text.Megaparsec.Error     as Megaparsec
 
 import qualified Data.Text                 as T
 import qualified Data.Text.IO              as T
-import           Data.Text.Prettyprint.Doc
 
 goldenPir :: Pretty a => String -> a -> TestNested
 goldenPir name value = nestedGoldenVsDoc name $ pretty value
 
-goldenPir' :: Pretty b => (a -> b) -> Parser a -> String -> TestNested
-goldenPir' op parser name = do
+goldenParse :: Pretty b => (a -> b) -> Parser a -> String -> TestNested
+goldenParse op parser name = do
     currentPath <- Reader.ask
     let filename = foldr (</>) (name ++ ".plc") currentPath
         result = do
@@ -31,6 +33,22 @@ goldenPir' op parser name = do
                     Left err  -> T.pack $ parseErrorPretty err
                     Right ast -> prettyText $ op ast
     nestedGoldenVsTextM name result
+
+goldenParseGetProgram :: Pretty b => (Quote a -> ExceptT SomeException IO b) -> Parser a -> String -> TestNested
+goldenParseGetProgram op parser name = do
+    currentPath <- Reader.ask
+    let filename = foldr (</>) (name ++ ".plc") currentPath
+        result = do
+                code <- T.readFile filename
+                output <- try $ runExceptT $ op $ throwIfError <$> parseQuoted parser name code
+                          :: IO (Either (Megaparsec.ParseError Char Parser.ParseError) _)
+                return $ case output of
+                    Left err         -> T.pack $ show err
+                    Right (Left err) -> T.pack $ show err
+                    Right (Right ok) -> prettyText ok
+    nestedGoldenVsTextM name result
+    where throwIfError (Left err)  = throw err
+          throwIfError (Right ast) = ast
 
 maybeDatatype :: Quote (Datatype TyName Name ())
 maybeDatatype = do
