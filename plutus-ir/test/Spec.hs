@@ -18,9 +18,10 @@ import           Language.PlutusCore.Quote
 import           Language.PlutusIR
 import           Language.PlutusIR.Compiler
 import           Language.PlutusIR.MkPir
-import           Language.PlutusIR.Parser
+import           Language.PlutusIR.Parser             hiding (Error)
 
 import qualified Language.PlutusCore                  as PLC
+import qualified Language.PlutusCore.Name             as PLC
 
 import qualified Language.PlutusCore.StdLib.Data.Bool as Bool
 import qualified Language.PlutusCore.StdLib.Data.Nat  as Nat
@@ -37,9 +38,7 @@ import           Control.Monad.Except
 import           Control.Monad.Morph
 import           Control.Monad.Reader
 
-import           Data.Either
 import           Data.Functor.Identity
-import qualified Data.Text                            as T
 import qualified Data.Text.Prettyprint.Doc            as T
 
 main :: IO ()
@@ -79,8 +78,8 @@ tests = testGroup "plutus-ir" <$> sequence [
 
 prettyprinting :: TestNested
 prettyprinting = testNested "prettyprinting"
-    [ goldenParse prettyText term "basic"
-    , goldenParse prettyText term "maybe"
+    [ goldenPir' id term "basic"
+    , goldenPir' id term "maybe"
     --, goldenPir "basic" basic
     --, goldenPir "maybe" (runQuote maybePir)
     ]
@@ -141,17 +140,20 @@ instance Pretty SourcePos where
 
 datatypes :: TestNested
 datatypes = testNested "datatypes" [
-    goldenParseGetProgram getProgram term "maybe",
-    goldenPlc "maybe" maybePir,
-    goldenPlc "listMatch" listMatch,
-    goldenEval "listMatchEval" [listMatch]
+    goldenPlc' term "maybe",
+    goldenPlc' term "listMatch",
+    goldenEval' term "listMatchEval"
+    --goldenEval "listMatchEval" [listMatch]
     ]
 
 recursion :: TestNested
 recursion = testNested "recursion" [
-    goldenPlc "even3" evenOdd,
-    goldenEval "even3Eval" [evenOdd],
-    goldenPlc "mutuallyRecursiveValues" mutuallyRecursiveValues
+    goldenPlc' term "even3",
+    goldenEval' term "even3Eval",
+    goldenPlc' term "mutuallyRecursiveValues"
+    --goldenPlc "even3" evenOdd,
+    --goldenEval "even3Eval" [evenOdd],
+    --goldenPlc "mutuallyRecursiveValues" mutuallyRecursiveValues
     ]
 
 natToBool :: Quote (Type TyName ())
