@@ -38,6 +38,7 @@ import           Control.Monad.Except
 import           Control.Monad.Morph
 import           Control.Monad.Reader
 
+import           Data.Either
 import           Data.Functor.Identity
 import qualified Data.Text.Prettyprint.Doc            as T
 
