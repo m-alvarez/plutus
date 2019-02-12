@@ -13,7 +13,11 @@ import           Language.PlutusIR.Compiler.Error
 import           Language.PlutusIR.Compiler.Provenance
 import qualified Language.PlutusIR.Compiler.Term             as Term
 import           Language.PlutusIR.Compiler.Types
+<<<<<<< HEAD
 import           Language.PlutusIR.Transform.Rename          ()
+=======
+import           Language.PlutusIR.Transform.Rename
+>>>>>>> Fixed minor renaming error in recursive let
 import           Language.PlutusIR.Transform.ThunkRecursions
 
 import qualified Language.PlutusCore                         as PLC
