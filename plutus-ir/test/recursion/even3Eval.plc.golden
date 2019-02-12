@@ -1,1 +1,1 @@
-(abs a_123 (type) (lam x_124 a_123 (lam y_125 a_123 y_125)))
+(abs a_666 (type) (lam x_667 a_666 (lam y_668 a_666 y_668)))

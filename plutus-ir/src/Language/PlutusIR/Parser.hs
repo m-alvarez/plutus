@@ -10,6 +10,7 @@ module Language.PlutusIR.Parser
     , program
     , Parser
     , ParseError (..)
+    , Error
     , SourcePos
     ) where
 
@@ -44,6 +45,8 @@ data ParseError = Overflow Natural Integer
                 | UnexpectedKeyword String
                 | InternalError String
                 deriving (Eq, Ord, Show)
+
+type Error = Parsec.ParseError Char ParseError
 
 instance ShowErrorComponent ParseError where
     showErrorComponent (Overflow sz i) = "Integer overflow: " ++ show i ++ " does not fit in " ++ show sz ++ " bytes"
