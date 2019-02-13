@@ -30,7 +30,6 @@ import           Control.Monad.Except
 import           Control.Monad.Morph
 import           Control.Monad.Reader
 
-import           Data.Either
 import           Data.Functor.Identity
 
 import           Text.Megaparsec.Pos
@@ -58,49 +57,51 @@ compileAndMaybeTypecheck doTypecheck pir = flip runReaderT NoProvenance $ runQuo
     pure compiled
 
 tests :: TestNested
-tests = testGroup "plutus-ir" <$> sequence [
-    prettyprinting,
-    parsing,
-    datatypes,
-    recursion,
-    serialization,
-    errors,
-    optimizer,
-    transform
+tests = testGroup "plutus-ir" <$> sequence
+    [ prettyprinting
+    , parsing
+    , datatypes
+    , recursion
+    , serialization
+    , errors
+    , optimizer
+    , transform
     ]
 
 prettyprinting :: TestNested
 prettyprinting = testNested "prettyprinting"
-    [ goldenPir id term "basic"
-    , goldenPir id term "maybe"
+    $ map (goldenPir id term)
+    [ "basic"
+    , "maybe"
     ]
 
 datatypes :: TestNested
-datatypes = testNested "datatypes" [
-    goldenPlcFromPir term "maybe",
-    goldenPlcFromPir term "listMatch",
-    goldenEvalPir term "listMatchEval"
+datatypes = testNested "datatypes"
+    [ goldenPlcFromPir term "maybe"
+    , goldenPlcFromPir term "listMatch"
+    , goldenEvalPir term "listMatchEval"
     ]
 
 recursion :: TestNested
-recursion = testNested "recursion" [
-    goldenPlcFromPir term "even3",
-    goldenEvalPir term "even3Eval",
-    goldenPlcFromPir term "mutuallyRecursiveValues"
+recursion = testNested "recursion"
+    [ goldenPlcFromPir term "even3"
+    , goldenEvalPir term "even3Eval"
+    , goldenPlcFromPir term "mutuallyRecursiveValues"
     ]
 
 serialization :: TestNested
-serialization = testNested "serialization" [
-    goldenPir roundTripPirTerm term "serializeBasic",
-    goldenPir roundTripPirTerm term "serializeMaybePirTerm",
-    goldenPir roundTripPirTerm term "serializeEvenOdd",
-    goldenPir roundTripPirTerm term "serializeListMatch"
+serialization = testNested "serialization"
+    $ map (goldenPir roundTripPirTerm term)
+    [ "serializeBasic"
+    , "serializeMaybePirTerm"
+    , "serializeEvenOdd"
+    , "serializeListMatch"
     ]
 
 roundTripPirTerm :: Term TyName Name a -> Term TyName Name ()
 roundTripPirTerm = deserialise . serialise . void
 
 errors :: TestNested
-errors = testNested "errors" [
-    goldenPlcFromPirCatch term "mutuallyRecursiveTypes"
+errors = testNested "errors"
+    [ goldenPlcFromPirCatch term "mutuallyRecursiveTypes"
     ]

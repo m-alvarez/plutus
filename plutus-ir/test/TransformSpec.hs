@@ -15,7 +15,8 @@ transform = testNested "transform" [
     ]
 
 thunkRecursions :: TestNested
-thunkRecursions = testNested "thunkRecursions" [
-    goldenPir (runQuote . thunkRecursionsTerm) term "listFold",
-    goldenPir (runQuote . thunkRecursionsTerm) term "monoMap"
+thunkRecursions = testNested "thunkRecursions"
+    $ map (goldenPir (runQuote . thunkRecursionsTerm) term)
+    [ "listFold"
+    , "monoMap"
     ]

@@ -14,16 +14,17 @@ optimizer = testNested "optimizer" [
     ]
 
 deadCode :: TestNested
-deadCode = testNested "deadCode" [
-    goldenPir removeDeadBindings term "typeLet"
-    , goldenPir removeDeadBindings term "termLet"
-    , goldenPir removeDeadBindings term "datatypeLiveType"
-    , goldenPir removeDeadBindings term "datatypeLiveConstr"
-    , goldenPir removeDeadBindings term "datatypeLiveDestr"
-    , goldenPir removeDeadBindings term "datatypeDead"
-    , goldenPir removeDeadBindings term "singleBinding"
-    , goldenPir removeDeadBindings term "nestedBindings"
-    , goldenPir removeDeadBindings term "nestedBindingsIndirect"
-    , goldenPir removeDeadBindings term "recBindingSimple"
-    , goldenPir removeDeadBindings term "recBindingComplex"
+deadCode = testNested "deadCode"
+    $ map (goldenPir removeDeadBindings term)
+    [ "typeLet"
+    , "termLet"
+    , "datatypeLiveType"
+    , "datatypeLiveConstr"
+    , "datatypeLiveDestr"
+    , "datatypeDead"
+    , "singleBinding"
+    , "nestedBindings"
+    , "nestedBindingsIndirect"
+    , "recBindingSimple"
+    , "recBindingComplex"
     ]
