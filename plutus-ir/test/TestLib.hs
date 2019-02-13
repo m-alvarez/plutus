@@ -8,7 +8,7 @@ import           PlutusPrelude                hiding ((</>))
 
 import           Control.Exception
 import           Control.Monad.Except
-import qualified Control.Monad.Reader         as Reader
+import           Control.Monad.Reader         as Reader
 
 import qualified Language.PlutusCore.DeBruijn as PLC
 import           Language.PlutusCore.Pretty
@@ -38,13 +38,13 @@ goldenPirM op parser name = withGoldenFileM name parseOrError
 ppThrow :: PrettyBy PrettyConfigPlc a => ExceptT SomeException IO a -> IO T.Text
 ppThrow = fmap docText . rethrow . fmap prettyPlcClassicDebug
 
+ppCatch :: PrettyPlc a => ExceptT SomeException IO a -> IO T.Text
+ppCatch value = docText <$> (either (pretty . show) prettyPlcClassicDebug <$> runExceptT value)
+
 goldenPlcFromPir :: GetProgram a => Parser a -> String -> TestNested
 goldenPlcFromPir = goldenPirM (\ast -> ppThrow $ do
                                 p <- getProgram ast
                                 withExceptT toException $ PLC.deBruijnProgram p)
-
-ppCatch :: PrettyPlc a => ExceptT SomeException IO a -> IO T.Text
-ppCatch value = docText <$> (either (pretty . show) prettyPlcClassicDebug <$> runExceptT value)
 
 goldenPlcFromPirCatch :: GetProgram a => Parser a -> String -> TestNested
 goldenPlcFromPirCatch = goldenPirM (\ast -> ppCatch $ do
