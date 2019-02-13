@@ -10,6 +10,7 @@ import           Language.PlutusIR
 import           Language.PlutusIR.MkPir
 import           Language.PlutusIR.Optimizer.DeadCode
 import           Language.PlutusIR.Transform.Rename   ()
+import           Language.PlutusIR.Parser
 
 import qualified Language.PlutusCore                  as PLC
 
@@ -22,17 +23,28 @@ optimizer = testNested "optimizer" [
 
 deadCode :: TestNested
 deadCode = testNested "deadCode" [
-    goldenPir "typeLet" typeLet
-    , goldenPir "termLet" termLet
-    , goldenPir "datatypeLiveType" datatypeLiveType
-    , goldenPir "datatypeLiveConstr" datatypeLiveConstr
-    , goldenPir "datatypeLiveDestr" datatypeLiveDestr
-    , goldenPir "datatypeDead" datatypeDead
-    , goldenPir "singleBinding" singleBinding
-    , goldenPir "nestedBindings" nestedBindings
-    , goldenPir "nestedBindingsIndirect" nestedBindingsIndirect
-    , goldenPir "recBindingSimple" recBindingSimple
-    , goldenPir "recBindingComplex" recBindingComplex
+    goldenPir' removeDeadBindings term "typeLet"
+    , goldenPir' removeDeadBindings term "termLet"
+    , goldenPir' removeDeadBindings term "datatypeLiveType"
+    , goldenPir' removeDeadBindings term "datatypeLiveConstr"
+    , goldenPir' removeDeadBindings term "datatypeLiveDestr"
+    , goldenPir' removeDeadBindings term "datatypeDead"
+    , goldenPir' removeDeadBindings term "singleBinding"
+    , goldenPir' removeDeadBindings term "nestedBindings"
+    , goldenPir' removeDeadBindings term "nestedBindingsIndirect"
+    , goldenPir' removeDeadBindings term "recBindingSimple"
+    , goldenPir' removeDeadBindings term "recBindingComplex"
+    --goldenPir "typeLet" typeLet
+    --, goldenPir "termLet" termLet
+    --, goldenPir "datatypeLiveType" datatypeLiveType
+    --, goldenPir "datatypeLiveConstr" datatypeLiveConstr
+    --, goldenPir "datatypeLiveDestr" datatypeLiveDestr
+    --, goldenPir "datatypeDead" datatypeDead
+    --, goldenPir "singleBinding" singleBinding
+    --, goldenPir "nestedBindings" nestedBindings
+    --, goldenPir "nestedBindingsIndirect" nestedBindingsIndirect
+    --, goldenPir "recBindingSimple" recBindingSimple
+    --, goldenPir "recBindingComplex" recBindingComplex
     ]
 
 typeLet :: Term TyName Name ()

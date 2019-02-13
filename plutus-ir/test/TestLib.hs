@@ -10,7 +10,6 @@ import           PlutusPrelude                hiding ((</>))
 
 import qualified Control.Monad.Reader         as Reader
 
-import qualified Language.PlutusCore          as PLC
 import qualified Language.PlutusCore.DeBruijn as PLC
 import           Language.PlutusCore.Pretty
 import           Language.PlutusCore.Quote
