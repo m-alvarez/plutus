@@ -14,7 +14,7 @@ import qualified Language.PlutusCore.DeBruijn as PLC
 import           Language.PlutusCore.Pretty
 import           Language.PlutusIR.Parser     as Parser
 
-import           System.FilePath              ((</>))
+import           System.FilePath              (joinPath, (</>))
 
 import           Text.Megaparsec.Error        as Megaparsec
 
@@ -23,9 +23,9 @@ import qualified Data.Text.IO                 as T
 
 withGoldenFileM :: String -> (T.Text -> IO T.Text) -> TestNested
 withGoldenFileM name op = do
-    currentPath <- Reader.ask
-    let filename = foldr (</>) (name ++ ".plc") currentPath
+    filename <- (</> (name ++ ".plc")) <$> currentDir
     nestedGoldenVsTextM name (op =<< T.readFile filename)
+    where currentDir = joinPath <$> ask
 
 goldenPir :: Pretty b => (a -> b) -> Parser a -> String -> TestNested
 goldenPir op = goldenPirM (return . op)
