@@ -275,9 +275,9 @@ tyVarDecl = inParens $ TyVarDecl <$> reservedWord "tyvardecl" <*> tyVar <*> kind
 datatype :: Parser (Datatype TyName Name SourcePos)
 datatype = inParens $ Datatype <$> reservedWord "datatype"
     <*> tyVarDecl
-    <*> some tyVarDecl
+    <*> many tyVarDecl
     <*> var
-    <*> some varDecl
+    <*> many varDecl
 
 binding :: Parser (Binding TyName Name SourcePos)
 binding =  inParens $

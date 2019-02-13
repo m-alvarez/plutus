@@ -3,11 +3,11 @@
 module TestLib where
 
 import           Common
-import           Control.Exception
-import           Control.Monad.Except
 import           PlcTestUtils
 import           PlutusPrelude                hiding ((</>))
 
+import           Control.Exception
+import           Control.Monad.Except
 import qualified Control.Monad.Reader         as Reader
 
 import qualified Language.PlutusCore.DeBruijn as PLC
@@ -23,43 +23,38 @@ import           Text.Megaparsec.Error        as Megaparsec
 import qualified Data.Text                    as T
 import qualified Data.Text.IO                 as T
 
--- Sadly necessary: since parseQuoted returns Quote (Either Error a), and there's no good way
--- of commutting Quote and Either, we just throw an exception inside the Quote and immediately
--- catch it outside.
-parseQuotedExcept :: Parser a -> String -> T.Text -> IO (Either Parser.Error (Quote a))
-parseQuotedExcept parser name = try . return . fmap throwIfError . parseQuoted parser name
-    where throwIfError = either throw id
-
-goldenPir :: Pretty a => String -> a -> TestNested
-goldenPir name value = nestedGoldenVsDoc name $ pretty value
-
 withGoldenFileM :: String -> (T.Text -> IO T.Text) -> TestNested
 withGoldenFileM name op = do
     currentPath <- Reader.ask
     let filename = foldr (</>) (name ++ ".plc") currentPath
     nestedGoldenVsTextM name (op =<< T.readFile filename)
 
-withGoldenFile :: String -> (T.Text -> T.Text) -> TestNested
-withGoldenFile name op = withGoldenFileM name (return . op)
+goldenPir :: Pretty b => (a -> b) -> Parser a -> String -> TestNested
+goldenPir op = goldenPirM (return . op)
 
-goldenPir' :: Pretty b => (a -> b) -> Parser a -> String -> TestNested
-goldenPir' op = goldenPirQ (return . op . runQuote)
-
-goldenPirQ :: Pretty b => (Quote a -> IO b) -> Parser a -> String -> TestNested
-goldenPirQ op parser name = withGoldenFileM name parseOrError
-    where parseOrError src = either (return . T.pack . parseErrorPretty) (fmap prettyText . op)
-                             =<< parseQuotedExcept parser name src
+goldenPirM :: Pretty b => (a -> IO b) -> Parser a -> String -> TestNested
+goldenPirM op parser name = withGoldenFileM name parseOrError
+    where parseOrError = either (return . T.pack . parseErrorPretty) (fmap prettyText . op)
+                         . parse parser name
 
 ppThrow :: PrettyBy PrettyConfigPlc a => ExceptT SomeException IO a -> IO T.Text
 ppThrow = fmap docText . rethrow . fmap prettyPlcClassicDebug
 
-goldenPlc' :: (GetProgram (Quote a)) => Parser a -> String -> TestNested
-goldenPlc' = goldenPirQ (\ast -> ppThrow $ do
+goldenPlcFromPir :: GetProgram a => Parser a -> String -> TestNested
+goldenPlcFromPir = goldenPirM (\ast -> ppThrow $ do
                                 p <- getProgram ast
                                 withExceptT toException $ PLC.deBruijnProgram p)
 
-goldenEval' :: (GetProgram (Quote a)) => Parser a -> String -> TestNested
-goldenEval' = goldenPirQ (\ast -> ppThrow $ runPlc [ast])
+ppCatch :: PrettyPlc a => ExceptT SomeException IO a -> IO T.Text
+ppCatch value = docText <$> (either (pretty . show) prettyPlcClassicDebug <$> runExceptT value)
+
+goldenPlcFromPirCatch :: GetProgram a => Parser a -> String -> TestNested
+goldenPlcFromPirCatch = goldenPirM (\ast -> ppCatch $ do
+                                           p <- getProgram ast
+                                           withExceptT toException $ PLC.deBruijnProgram p)
+
+goldenEvalPir :: (GetProgram a) => Parser a -> String -> TestNested
+goldenEvalPir = goldenPirM (\ast -> ppThrow $ runPlc [ast])
 
 maybeDatatype :: Quote (Datatype TyName Name ())
 maybeDatatype = do
