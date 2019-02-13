@@ -9,6 +9,7 @@ import           Language.PlutusCore.Quote
 import           Language.PlutusIR
 import           Language.PlutusIR.MkPir
 import           Language.PlutusIR.Optimizer.DeadCode
+import           Language.PlutusIR.Parser
 
 import qualified Language.PlutusCore                  as PLC
 
@@ -21,21 +22,32 @@ optimizer = testNested "optimizer" [
 
 deadCode :: TestNested
 deadCode = testNested "deadCode" [
-    goldenPir "typeLet" (runQuote typeLet)
-    , goldenPir "termLet" (runQuote termLet)
-    , goldenPir "datatypeLiveType" (runQuote datatypeLiveType)
-    , goldenPir "datatypeLiveConstr" (runQuote datatypeLiveConstr)
-    , goldenPir "datatypeLiveDestr" (runQuote datatypeLiveDestr)
-    , goldenPir "datatypeDead" (runQuote datatypeDead)
-    , goldenPir "singleBinding" (runQuote singleBinding)
-    , goldenPir "nestedBindings" (runQuote nestedBindings)
-    , goldenPir "nestedBindingsIndirect" (runQuote nestedBindingsIndirect)
-    , goldenPir "recBindingSimple" (runQuote recBindingSimple)
-    , goldenPir "recBindingComplex" (runQuote recBindingComplex)
+    goldenPir' removeDeadBindings term "typeLet"
+    , goldenPir' removeDeadBindings term "termLet"
+    , goldenPir' removeDeadBindings term "datatypeLiveType"
+    , goldenPir' removeDeadBindings term "datatypeLiveConstr"
+    , goldenPir' removeDeadBindings term "datatypeLiveDestr"
+    , goldenPir' removeDeadBindings term "datatypeDead"
+    , goldenPir' removeDeadBindings term "singleBinding"
+    , goldenPir' removeDeadBindings term "nestedBindings"
+    , goldenPir' removeDeadBindings term "nestedBindingsIndirect"
+    , goldenPir' removeDeadBindings term "recBindingSimple"
+    , goldenPir' removeDeadBindings term "recBindingComplex"
+    -- goldenPir "typeLet" (runQuote typeLet)
+    --, goldenPir "termLet" (runQuote termLet)
+    --, goldenPir "datatypeLiveType" (runQuote datatypeLiveType)
+    --, goldenPir "datatypeLiveConstr" (runQuote datatypeLiveConstr)
+    --, goldenPir "datatypeLiveDestr" (runQuote datatypeLiveDestr)
+    --, goldenPir "datatypeDead" (runQuote datatypeDead)
+    --, goldenPir "singleBinding" (runQuote singleBinding)
+    --, goldenPir "nestedBindings" (runQuote nestedBindings)
+    --, goldenPir "nestedBindingsIndirect" (runQuote nestedBindingsIndirect)
+    --, goldenPir "recBindingSimple" (runQuote recBindingSimple)
+    --, goldenPir "recBindingComplex" (runQuote recBindingComplex)
     ]
 
 typeLet :: Quote (Term TyName Name ())
-typeLet = removeDeadBindings <$> do
+typeLet = {- removeDeadBindings <$> -} do
     u <- freshTyName () "unit"
     unit <- Unit.getBuiltinUnit
     unitVal <- embedIntoIR <$> Unit.getBuiltinUnitval
@@ -44,7 +56,7 @@ typeLet = removeDeadBindings <$> do
         ] unitVal
 
 termLet :: Quote (Term TyName Name ())
-termLet = removeDeadBindings <$> do
+termLet = {- removeDeadBindings <$> -} do
     uv <- freshName () "unitval"
     unit <- Unit.getBuiltinUnit
     unitVal <- embedIntoIR <$> Unit.getBuiltinUnitval
@@ -53,7 +65,7 @@ termLet = removeDeadBindings <$> do
         ] unitVal
 
 datatypeLiveType :: Quote (Term TyName Name ())
-datatypeLiveType = removeDeadBindings <$> do
+datatypeLiveType = {- removeDeadBindings <$> -} do
     mb@(Datatype _ d _ _ _) <- maybeDatatype
 
     pure $
@@ -64,7 +76,7 @@ datatypeLiveType = removeDeadBindings <$> do
             ] (Error () (mkTyVar () d))
 
 datatypeLiveConstr :: Quote (Term TyName Name ())
-datatypeLiveConstr = removeDeadBindings <$> do
+datatypeLiveConstr = {- removeDeadBindings <$> -} do
     mb@(Datatype _ _ _ _ [nothing, _]) <- maybeDatatype
 
     pure $
@@ -75,7 +87,7 @@ datatypeLiveConstr = removeDeadBindings <$> do
             ] (mkVar () nothing)
 
 datatypeLiveDestr :: Quote (Term TyName Name ())
-datatypeLiveDestr = removeDeadBindings <$> do
+datatypeLiveDestr = {- removeDeadBindings <$> -} do
     mb@(Datatype _ _ _ match _) <- maybeDatatype
 
     pure $
@@ -86,7 +98,7 @@ datatypeLiveDestr = removeDeadBindings <$> do
             ] (Var () match)
 
 datatypeDead :: Quote (Term TyName Name ())
-datatypeDead = removeDeadBindings <$> do
+datatypeDead = {- removeDeadBindings <$> -} do
     mb <- maybeDatatype
     unitVal <- embedIntoIR <$> Unit.getBuiltinUnitval
 
@@ -98,7 +110,7 @@ datatypeDead = removeDeadBindings <$> do
             ] unitVal
 
 singleBinding :: Quote (Term TyName Name ())
-singleBinding = removeDeadBindings <$> do
+singleBinding = {- removeDeadBindings <$> -} do
     u <- freshTyName () "unit"
     uv <- freshName () "unitval"
     unit <- Unit.getBuiltinUnit
@@ -109,7 +121,7 @@ singleBinding = removeDeadBindings <$> do
         ] (Var () uv)
 
 nestedBindings :: Quote (Term TyName Name ())
-nestedBindings = removeDeadBindings <$> do
+nestedBindings = {- removeDeadBindings <$> -} do
     u <- freshTyName () "unit"
     uv <- freshName () "unitval"
     unit <- Unit.getBuiltinUnit
@@ -123,7 +135,7 @@ nestedBindings = removeDeadBindings <$> do
         ] (Var () uv)
 
 nestedBindingsIndirect :: Quote (Term TyName Name ())
-nestedBindingsIndirect = removeDeadBindings <$> do
+nestedBindingsIndirect = {- removeDeadBindings <$> -} do
     u <- freshTyName () "unit"
     unit <- Unit.getBuiltinUnit
 
@@ -148,7 +160,7 @@ nestedBindingsIndirect = removeDeadBindings <$> do
         ] (LamAbs () arg (TyVar () dt) (Var () arg))
 
 recBindingSimple :: Quote (Term TyName Name ())
-recBindingSimple = removeDeadBindings <$> do
+recBindingSimple = {- removeDeadBindings <$> -} do
     uv <- freshName () "unitval"
     unit <- Unit.getBuiltinUnit
     unitVal <- embedIntoIR <$> Unit.getBuiltinUnitval
@@ -157,7 +169,7 @@ recBindingSimple = removeDeadBindings <$> do
         ] unitVal
 
 recBindingComplex :: Quote (Term TyName Name ())
-recBindingComplex = removeDeadBindings <$> do
+recBindingComplex = {- removeDeadBindings <$> -} do
     u <- freshTyName () "unit"
     uv <- freshName () "unitval"
     unit <- Unit.getBuiltinUnit

@@ -8,6 +8,7 @@ import           Language.PlutusCore.Quote
 
 import           Language.PlutusIR
 import           Language.PlutusIR.MkPir
+import           Language.PlutusIR.Parser
 import           Language.PlutusIR.Transform.ThunkRecursions
 
 transform :: TestNested
@@ -17,8 +18,10 @@ transform = testNested "transform" [
 
 thunkRecursions :: TestNested
 thunkRecursions = testNested "thunkRecursions" [
-    goldenPir "listFold" (runQuote listFold),
-    goldenPir "monoMap" (runQuote monoMap)
+    goldenPir' (runQuote . thunkRecursionsTerm) term "listFold",
+    goldenPir' (runQuote . thunkRecursionsTerm) term "monoMap"
+    --goldenPir "listFold" (runQuote listFold),
+    --goldenPir "monoMap" (runQuote monoMap)
     ]
 
 listFold :: Quote (Term TyName Name ())

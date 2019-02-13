@@ -42,6 +42,8 @@ import           Data.Either
 import           Data.Functor.Identity
 import qualified Data.Text.Prettyprint.Doc            as T
 
+import           Text.Megaparsec.Pos
+
 main :: IO ()
 main = defaultMain $ runTestNestedIn ["test"] tests
 
