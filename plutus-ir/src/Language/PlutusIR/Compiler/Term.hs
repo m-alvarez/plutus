@@ -39,6 +39,30 @@ compileTerm = \case
     IWrap x tn ty t -> PLC.IWrap x tn ty <$> compileTerm t
     Unwrap x t -> PLC.Unwrap x <$> compileTerm t
 
+-- | Removes all the recursive term and type bindings in a 'Term' (but not Datatype bindings)
+eliminateRecBindings :: Compiling m e a => PIRTerm a -> m (PIRTerm a)
+eliminateRecBindings = \case
+    Let p r bs body -> do
+        body' <- eliminateRecBindings body
+        case r of
+            Rec -> local (const $ LetBinding r p) $ compileRecBindings' body' bs
+            NonRec -> do
+                bs' <- sequence $ map elimBody bs
+                pure $ Let p r bs' body'
+        where elimBody (TermBind p v t)     = TermBind p v <$> eliminateRecBindings t
+              elimBody b@(TypeBind _ _ _)   = pure b
+              elimBody b@(DatatypeBind _ _) = pure b
+    Var x n -> pure $ Var x n
+    TyAbs x n k t -> TyAbs x n k <$> eliminateRecBindings t
+    LamAbs x n ty t -> LamAbs x n ty <$> eliminateRecBindings t
+    Apply x t1 t2 -> Apply x <$> eliminateRecBindings t1 <*> eliminateRecBindings t2
+    t@(Constant x c) -> pure t
+    t@(Builtin x bi) -> pure t
+    TyInst x t ty -> TyInst x <$> eliminateRecBindings t <*> pure ty
+    Error x ty -> pure $ Error x ty
+    IWrap x tn ty t -> IWrap x tn ty <$> eliminateRecBindings t
+    Unwrap x t -> Unwrap x <$> eliminateRecBindings t
+
 compileNonRecBindings :: Compiling m e a => Recursivity -> PLCTerm a -> [Binding TyName Name (Provenance a)] -> m (PLCTerm a)
 compileNonRecBindings r = foldM (compileSingleBinding r)
 
@@ -51,6 +75,14 @@ compileRecBindings r body bs =
         tysBound <- compileRecTypeBindings r body typeBinds
         compileRecTermBindings r tysBound termBinds
 
+compileRecBindings' :: Compiling m e a => PIRTerm a -> [Binding TyName Name (Provenance a)] -> m (PIRTerm a)
+compileRecBindings' body bs =
+    let (termBinds, otherBinds) = partition (\case { TermBind {} -> True; _ -> False }) bs
+        typeBinds = filter (\case {TypeBind {} -> True; _ -> False}) otherBinds
+    in do
+        tysBound <- compileRecTypeBindings' body typeBinds
+        compileRecTermBindings' tysBound termBinds
+
 compileRecTermBindings :: Compiling m e a => Recursivity -> PLCTerm a -> [Binding TyName Name (Provenance a)] -> m (PLCTerm a)
 compileRecTermBindings _ body bs = case bs of
     [] -> pure body
@@ -60,11 +92,26 @@ compileRecTermBindings _ body bs = case bs of
             _ -> ask >>= \p -> throwing _Error $ CompilationError p "Internal error: type binding in term binding group"
         compileRecTerms body binds
 
+compileRecTermBindings' :: Compiling m e a => PIRTerm a -> [Binding TyName Name (Provenance a)] -> m (PIRTerm a)
+compileRecTermBindings' body bs = case bs of
+    [] -> pure body
+    _  -> do
+        binds <- forM bs $ \case
+            TermBind _ vd rhs -> pure $ (vd, rhs)
+            _ -> ask >>= \p -> throwing _Error $ CompilationError p "Internal error: type binding in term binding group"
+        compileRecTerms' body binds
+
 compileRecTypeBindings :: Compiling m e a => Recursivity -> PLCTerm a -> [Binding TyName Name (Provenance a)] -> m (PLCTerm a)
 compileRecTypeBindings r body bs = case bs of
     []  -> pure body
     [b] -> compileSingleBinding r body b
     _   -> ask >>= \p -> throwing _Error $ UnsupportedError p "Mutually recursive datatypes"
+
+compileRecTypeBindings' :: Compiling m e a => PIRTerm a -> [Binding TyName Name (Provenance a)] -> m (PIRTerm a)
+compileRecTypeBindings' body bs = case bs of
+    []  -> pure body
+    [b] -> compileSingleBinding' Rec body b
+    _   -> ask >>= \p -> throwing _Error $ UnsupportedError p "Mutually recursive types are not supported"
 
 compileSingleBinding :: Compiling m e a => Recursivity -> PLCTerm a -> Binding TyName Name (Provenance a) ->  m (PLCTerm a)
 compileSingleBinding r body b =  case b of
@@ -78,3 +125,54 @@ compileSingleBinding r body b =  case b of
         PLC.mkTypeLet <$> ask <*> pure def <*> pure body
     DatatypeBind x d -> local (const x) $ local (TypeBinding (datatypeNameString d)) $
         compileDatatype r body d
+
+compileSingleBinding' :: Compiling m e a => Recursivity -> PIRTerm a -> Binding TyName Name (Provenance a) ->  m (PIRTerm a)
+compileSingleBinding' r body b =  case b of
+    TermBind x d@(VarDecl x2 name ty) rhs -> local (const x) $ case r of
+        Rec -> compileRecTerms' body [(d, rhs)]
+        NonRec -> local (TermBinding (varDeclNameString d)) $
+            Apply <$> ask <*> pure (LamAbs x2 name ty body) <*> pure rhs
+    TypeBind x d@(TyVarDecl x2 name k) rhs -> local (const x) $ local (TypeBinding (tyVarDeclNameString d)) $
+        TyInst <$> ask <*> pure (TyAbs x2 name k body) <*> pure rhs
+    DatatypeBind x d -> local (const x) $ local (TypeBinding (datatypeNameString d)) $
+        compileDatatype' r body d
+
+{- WIP
+
+-- | Remove all the non-recursive bindings in a 'Term'
+eliminateNonRecBindings :: Compiling m e a => PIRTerm a -> m (PIRTerm a)
+eliminateNonRecBindings = \case
+    Let p r bs body -> do
+        body' <- eliminateNonRecBindings body
+        case r of
+            NonRec -> local (const $ LetBinding r p) $ compileNonRecBindings' r body' bs
+            Rec    -> do
+                bs' <- sequence $ map elimBody bs
+                pure $ Let p r bs' body'
+        where elimBody (TermBind p v t) = TermBind p v <$> eliminateNonRecBindings t
+              elimBody b@(TypeBind _ _ _) = pure b
+              elimBody b@(DatatypeBind _ _) = pure b
+    Var x n -> pure $ Var x n
+    TyAbs x n k t -> TyAbs x n k <$> eliminateNonRecBindings t
+    LamAbs x n ty t -> LamAbs x n ty <$> eliminateNonRecBindings t
+    Apply x t1 t2 -> Apply x <$> eliminateNonRecBindings t1 <*> eliminateNonRecBindings t2
+    t@(Constant x c) -> pure t
+    t@(Builtin x bi) -> pure t
+    TyInst x t ty -> TyInst x <$> eliminateNonRecBindings t <*> pure ty
+    Error x ty -> pure $ Error x ty
+    IWrap x tn ty t -> IWrap x tn ty <$> eliminateNonRecBindings t
+    Unwrap x t -> Unwrap x <$> eliminateNonRecBindings t
+
+compileNonRecBindings' :: Compiling m e a => Recursivity -> PIRTerm a -> [Binding TyName Name (Provenance a)] -> m (PIRTerm a)
+compileNonRecBindings' r = foldM compileNonRecBinding
+
+
+compileNonRecBinding :: Compiling m e a => PIRTerm a -> Binding TyName Name (Provenance a) ->  m (PIRTerm a)
+compileNonRecBinding body b = case b of
+    TermBind x d@(VarDecl x2 name ty) rhs -> local (const x) $ local (TermBinding (varDeclNameString d)) $
+        Apply <$> ask <*> pure (LamAbs x2 name ty body) <*> pure rhs
+    TypeBind x d@(TyVarDecl x2 name k) rhs -> local (const x) $ local (TypeBinding (tyVarDeclNameString d)) $
+        TyInst <$> ask <*> pure (TyAbs x2 name k body) <*> pure rhs
+    DatatypeBind _ _ ->
+        ask >>= \p -> throwing _Error $ CompilationError p "Datatype binding found in non-recursive let elimination phase"
+-}

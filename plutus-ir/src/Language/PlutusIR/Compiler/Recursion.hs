@@ -65,6 +65,17 @@ compileRecTerms body bs = do
     fixpoint <- mkFixpoint bs
     Tuple.bindTuple p (PLC.varDeclName . PLC.defVar <$> bs) fixpoint body
 
+-- | Compile a mutually recursive list of bindings bound in a body.
+compileRecTerms'
+    :: Compiling m e a
+    => PIRTerm a
+    -> [(VarDecl TyName Name (Provenance a), PIRTerm a)]
+    -> m (PIRTerm a)
+compileRecTerms' body bs = do
+    p <- ask
+    fixpoint <- mkFixpoint' bs
+    Tuple.bindTuple p (PLC.varDeclName . PLC.defVar <$> bs) fixpoint body
+
 -- | Given a list of var decls, create a tuples of values that computes their mutually recursive fixpoint.
 mkFixpoint
     :: Compiling m e a
@@ -74,6 +85,22 @@ mkFixpoint bs = do
     p0 <- ask
 
     funs <- forM bs $ \(PLC.Def (PLC.VarDecl p name ty) term) -> do
+        compTerm <- compileTerm term
+        case PLC.mkFunctionDef p name ty compTerm of
+            Just fun -> pure fun
+            Nothing  -> throwing _Error $ CompilationError (PLC.tyLoc ty) "Recursive values must be of function type. You may need to manually add unit arguments."
+
+    liftQuote $ Function.getMutualFixOf p0 funs
+
+-- | Given a list of var decls, create a tuples of values that computes their mutually recursive fixpoint.
+mkFixpoint'
+    :: Compiling m e a
+    => [(VarDecl TyName Name (Provenance a), PIRTerm a)]
+    -> m (Tuple.Tuple (Provenance a))
+mkFixpoint' bs = do
+    p0 <- ask
+
+    funs <- forM bs $ \((VarDecl p name ty), term) -> do
         compTerm <- compileTerm term
         case PLC.mkFunctionDef p name ty compTerm of
             Just fun -> pure fun
