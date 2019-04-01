@@ -1,29 +1,36 @@
 -- | The interface between application code and a blockchain implementation
 module Ledger.API
-    ( LedgerAPI (submitTxn, utxo, slot, onSlot, cancel)
+    ( LedgerAPI (addTransaction, utxo, slot, reconcile)
+    , WalletBackend (onSlot, cancel)
     , CallbackId (CallbackId)
     ) where
 
 import           Data.Map (Map)
-import qualified Data.Map as Map
-
 import           Ledger
 
 
 newtype CallbackId = CallbackId Int
 
 class LedgerAPI m where
-    submitTxn :: Tx -> m ()
+    addTransaction :: Tx -> m ()
 
     -- We need to probe the current utxo - is this the right interface?
     utxo :: m (Map TxOutRef TxOut)
     slot :: m Slot
 
+    -- I think this should be provided by concrete instances rather than the class
+    -- Process all the pending transactions since the last slot and pick which get accepted
+    reconcile :: m ()
+
+class LedgerAPI m => WalletBackend m where
     -- We want some way of getting notifications from the ledger - is this the right interface?
     onSlot :: (CallbackId -> [Tx] -> [(Tx, ValidationError)] -> m ()) -> m CallbackId
     cancel :: CallbackId -> m ()
     -- Alternatively we could have every callback fire only once (in the immediately next slot) and
     -- if they need to keep running they can schedule themselves again
+
+    -- Question: should this class be responsible for coin selection?
+    -- Question: should this class be aware of who the user is?
 
 -- We need something like this
 fillTxn :: PubKey -> Tx -> Maybe Tx
